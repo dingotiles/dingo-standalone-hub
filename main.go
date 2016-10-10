@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 )
@@ -18,7 +21,36 @@ func main() {
 		return "Hello world!"
 	})
 	m.Get("/api", func(r render.Render) {
-		r.JSON(200, map[string]interface{}{"hello": "world"})
+		staticResponse := map[string]interface{}{
+			"cluster": map[string]interface{}{
+				"scope_name": "demo-cluster",
+			},
+			"wale_mode": "aws",
+			"wale_env": []string{
+				fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", os.Getenv("AWS_ACCESS_KEY_ID")),
+				fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", os.Getenv("AWS_SECRET_ACCESS_KEY")),
+				fmt.Sprintf("WAL_S3_BUCKET=%s", os.Getenv("WAL_S3_BUCKET")),
+				fmt.Sprintf("WALE_S3_ENDPOINT=%s", os.Getenv("WALE_S3_ENDPOINT")),
+			},
+			"postgresql": map[string]interface{}{
+				"admin": map[string]interface{}{
+					"username": "admin-username",
+					"password": "admin-password",
+				},
+				"superuser": map[string]interface{}{
+					"username": "superuser-username",
+					"password": "superuser-password",
+				},
+				"appuser": map[string]interface{}{
+					"username": "appuser-username",
+					"password": "appuser-password",
+				},
+			},
+			"etcd": map[string]interface{}{
+				"uri": os.Getenv("ETCD_URI"),
+			},
+		}
+		r.JSON(200, staticResponse)
 	})
 	m.Run()
 
