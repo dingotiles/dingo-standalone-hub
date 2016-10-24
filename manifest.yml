@@ -1,0 +1,7 @@
+applications:
+- name: dingo-api
+  memory: 64M
+  buildpack: go_buildpack
+  env:
+    GOPACKAGENAME: dingo-api
+  stack: cflinuxfs2
