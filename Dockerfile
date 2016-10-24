@@ -22,6 +22,6 @@ RUN set -x \
       && curl -L https://s3.amazonaws.com/s3cli-artifacts/s3cli-${S3CLI_VERSION}-linux-amd64 -o /usr/local/bin/s3cli \
       && chmod +x /usr/local/bin/s3cli
 
-COPY . /go/src/github.com/dingotiles/dingo-postgresql-api
+COPY . /go/src/github.com/dingotiles/dingo-api
 RUN set -x \
-    && go install github.com/dingotiles/dingo-postgresql-api
+    && go install github.com/dingotiles/dingo-api

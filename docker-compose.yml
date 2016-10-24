@@ -13,7 +13,7 @@ services:
       AWS_SECRET_ACCESS_KEY: ~
       WAL_S3_BUCKET: ~
       WALE_S3_ENDPOINT: ~
-    command: [dingo-postgresql-api]
+    command: [dingo-api]
   cluster1:
     image: dingotiles/dingo-postgresql96-agent:latest
     container_name: cluster1
