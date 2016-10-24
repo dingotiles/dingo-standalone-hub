@@ -16,10 +16,13 @@ func main() {
 	m.Use(render.Renderer(render.Options{
 		IndentJSON: true, // Output human readable JSON
 	}))
+	m.Get("/health", func(r render.Render) {
+		r.JSON(200, map[string]interface{}{"health": "ok"})
+	})
 	m.Post("/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
 		fmt.Printf("Recv: container start request: %v\n", req)
 		name := "patroni1"
-		patroniScope := "cluster1"
+		patroniScope := req.ClusterName
 		waleEnvVars := constructReturnedEnvVars(patroniScope, filterWaleEnvVars())
 		staticResponse := map[string]interface{}{
 			"cluster": map[string]interface{}{
