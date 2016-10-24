@@ -14,9 +14,9 @@ services:
       WAL_S3_BUCKET: ~
       WALE_S3_ENDPOINT: ~
     command: [dingo-api]
-  cluster1:
+  cluster1-node1:
     image: dingotiles/dingo-postgresql96-agent:latest
-    container_name: cluster1
+    container_name: cluster1-node1
     ports: ["5432:5432", "8008:8008"]
     environment:
       # DEBUG: 1
@@ -40,11 +40,14 @@ services:
     - -initial-cluster=etcd0=http://${DOCKER_HOST_IP}:2380
     - -initial-cluster-state=new
 
-  # tests:
-  #   build: ./images/tests/
-  #   image: dingo-api-container-tests
-  #   environment:
-  #     DOCKER_HOST_IP:
-  #     ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
-  #     AWS_ACCESS_KEY_ID:
-  #     AWS_SECRET_ACCESS_KEY:
+  tests:
+    build: ./images/tests/
+    image: dingo-api-container-tests
+    environment:
+      TEST_PATRONI_SCOPES: "cluster1"
+      DOCKER_HOST_IP:
+      ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      WAL_S3_BUCKET: ~
+      WALE_S3_ENDPOINT: ~

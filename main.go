@@ -19,7 +19,7 @@ func main() {
 	m.Post("/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
 		fmt.Printf("Recv: container start request: %v\n", req)
 		name := "patroni1"
-		patroniScope := "test-cluster-scope"
+		patroniScope := "cluster1"
 		waleEnvVars := constructReturnedEnvVars(patroniScope, filterWaleEnvVars())
 		staticResponse := map[string]interface{}{
 			"cluster": map[string]interface{}{

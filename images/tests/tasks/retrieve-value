@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+table_name=$1
+value=$2
+
+PATRONI_SCOPE=${PATRONI_SCOPE:-cluster1}
+SUPERUSER_USERNAME=${SUPERUSER_USERNAME:-superuser-username}
+SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD:-superuser-password}
+
+leader_name=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/leader)
+leader_uri=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.conn_url')
+uri=$(echo ${leader_uri} \
+  | sed "s%postgres://%postgres://${SUPERUSER_USERNAME}:${SUPERUSER_PASSWORD}@%")
+
+echo "Retrieving ${value} from ${table_name}..."
+
+psql ${uri} -c "SELECT value FROM ${table_name};" | grep "${value}" || {
+  echo Could not store and retrieve value in cluster!
+  exit 1
+}
