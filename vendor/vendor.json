@@ -21,6 +21,12 @@
 			"revisionTime": "2014-02-08T23:45:50Z"
 		},
 		{
+			"checksumSHA1": "Y3EKLJKsFFDwFoIf4KIu+kGNrxM=",
+			"path": "github.com/dingotiles/dingo-api/terminal",
+			"revision": "ad5c9fa26788f324bb6869ede4b792eb590b34bf",
+			"revisionTime": "2016-10-26T21:39:14Z"
+		},
+		{
 			"checksumSHA1": "p1kw+5/JfbNwKMh+hjPwdRdYfpc=",
 			"path": "github.com/dingotiles/dingo-postgresql-agent/config",
 			"revision": "252bde6d5836031d5cf417a7330c0f8bb4c93a0b",
@@ -63,5 +69,5 @@
 			"revisionTime": "2014-09-24T16:16:07Z"
 		}
 	],
-	"rootPath": "github.com/dingotiles/dingo-postgresql-api"
+	"rootPath": "github.com/dingotiles/dingo-api"
 }
