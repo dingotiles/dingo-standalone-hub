@@ -14,7 +14,7 @@ import (
 func main() {
 	m := martini.Classic()
 	m.Use(render.Renderer(render.Options{
-		Directory:  "public",
+		Directory:  "templates",
 		Extensions: []string{".tmpl", ".html"},
 		IndentJSON: true, // Output human readable JSON
 	}))
