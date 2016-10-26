@@ -17,15 +17,29 @@
         <div class="terminal">
           <table>
             <tbody>
-              <tr>{{$prompt := .Prompt}}
-                <td class='gutter'><pre class='line-numbers'>{{range .Lines}}<span class='line-number'>{{if .Command}}{{$prompt}}{{else}}&nbsp;{{end}}</span>
-{{end}}
-</pre></td>
-<td class='code'><pre><code>{{range .Lines}}{{if .Command}}<span class='line command'>{{.Text}}</span>{{else}}<span class='line'>{{.Text}}</span>{{end}}{{end}}
+              <tr>
+{{$prompt := .Prompt}}
+  <td class='gutter'><pre class='line-numbers'>
+    {{- range .Lines -}}
+    <span class='line-number'>
+      {{- if .Command -}}
+        {{- $prompt -}}
+      {{- else -}}
+        &nbsp;
+      {{- end -}}
+    </span>
+{{end}}</pre></td>
+  <td class='code'><pre><code>
+      {{- range .Lines -}}
+        {{- if .Command -}}
+        <span class='line command'>{{ .Text }}</span>
+        {{- else -}}
+        <span class='line'>{{.Text}}</span>{{end}}
+      {{- end -}}
 </code></pre></td>
-        </tr>
-      </tbody>
-    </table>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

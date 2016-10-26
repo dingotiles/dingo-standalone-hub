@@ -27,6 +27,23 @@ func TestTerminal_NewWindow_OneCommand(t *testing.T) {
 	}
 }
 
+func TestTerminal_NewWindow_NewlineOutput(t *testing.T) {
+	t.Parallel()
+	window := NewWindow("line1\n\nline3", "newline-output")
+	if len(window.Lines) != 3 {
+		t.Fatalf("expect 3 .Lines, instead: %#v", window.Lines)
+	}
+	if window.Lines[0].Text != "line1" {
+		t.Fatalf("expect .Lines[0].Text to be 'line1', instead: %#v", window.Lines[0].Text)
+	}
+	if window.Lines[1].Text != "" {
+		t.Fatalf("expect .Lines[1].Text to be '', instead: %#v", window.Lines[1].Text)
+	}
+	if window.Lines[2].Text != "line3" {
+		t.Fatalf("expect .Lines[2].Text to be 'line3', instead: %#v", window.Lines[0].Text)
+	}
+}
+
 func TestTerminal_NewWindow_CommandAndOutput(t *testing.T) {
 	t.Parallel()
 	window := NewWindow("# some-command\nsome\noutput", "command-and-output")

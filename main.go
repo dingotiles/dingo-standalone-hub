@@ -30,7 +30,6 @@ func main() {
 			return
 		}
 		tutorialData := terminal.NewWindow(string(data), params["tutorial"])
-		fmt.Printf("%#v\n", *tutorialData)
 		r.HTML(200, "tutorial", tutorialData)
 	})
 	m.Get("/health", func(r render.Render) {
