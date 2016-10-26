@@ -14,8 +14,13 @@ import (
 func main() {
 	m := martini.Classic()
 	m.Use(render.Renderer(render.Options{
+		Directory:  "public",
+		Extensions: []string{".tmpl", ".html"},
 		IndentJSON: true, // Output human readable JSON
 	}))
+	m.Get("/", func(r render.Render) {
+		r.HTML(200, "terminal-demo", "")
+	})
 	m.Get("/health", func(r render.Render) {
 		r.JSON(200, map[string]interface{}{"health": "ok"})
 	})
