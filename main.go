@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/codegangsta/martini-contrib/binding"
+	"github.com/dingotiles/dingo-api/terminal"
 	"github.com/dingotiles/dingo-postgresql-agent/config"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
@@ -28,18 +29,8 @@ func main() {
 			res.WriteHeader(404)
 			return
 		}
-		command_output_lines := strings.Split(string(data), "\n")
-		tutorialData := struct {
-			Tutorial string
-			Prompt   string
-			Command  string
-			Output   []string
-		}{
-			Tutorial: params["tutorial"],
-			Prompt:   "#",
-			Command:  command_output_lines[0],
-			Output:   command_output_lines[1:],
-		}
+		tutorialData := terminal.NewWindow(string(data), params["tutorial"])
+		fmt.Printf("%#v\n", *tutorialData)
 		r.HTML(200, "tutorial", tutorialData)
 	})
 	m.Get("/health", func(r render.Render) {

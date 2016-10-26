@@ -1,0 +1,18 @@
+# docker run -d \
+  --name dingo-postgresql \
+  -e DOCKER_HOST_IP=${DOCKER_HOST_IP:?required} \
+  -e DOCKER_HOST_PORT_5432=${PUBLIC_PORT} -p ${PUBLIC_PORT}:5432 \
+  -e DINGO_ORG_TOKEN=global-org \
+  -e DINGO_CLUSTER=demo-cluster-Rtti7O \
+  dingotiles/dingo-postgresql:latest
+94d1830c64b0237e0c91d8009be54b2b4c91c81f3a2bb47599d4d1447eec4a45
+# docker logs dingo-postgresql
+...
+patroni> The files belonging to this database system will be owned by user "postgres".
+patroni> This user must also own the server process.
+patroni>
+patroni> The database cluster will be initialized with locale "en_US.UTF-8".
+patroni> The default text search configuration will be set to "english".
+patroni>
+patroni> creating directory /data/postgres0 ... ok
+...

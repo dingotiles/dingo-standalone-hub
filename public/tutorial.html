@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>{{.Tutorial}}</title>
+    <title>{{.Label}}</title>
     <link rel="stylesheet" href="/css/terminal.css" media="screen" title="no title">
   </head>
   <body>
@@ -17,14 +17,11 @@
         <div class="terminal">
           <table>
             <tbody>
-              <tr>
-                <td class='gutter'><pre class='line-numbers'><span class='line-number'>{{.Prompt}}</span>
-{{range .Output}}<span class='line-number'>&nbsp;</span>
+              <tr>{{$prompt := .Prompt}}
+                <td class='gutter'><pre class='line-numbers'>{{range .Lines}}<span class='line-number'>{{if .Command}}{{$prompt}}{{else}}&nbsp;{{end}}</span>
 {{end}}
 </pre></td>
-<td class='code'><pre><code><span class='line command'>{{.Command}}</span>
-{{range .Output}}{{.}}
-{{end}}
+<td class='code'><pre><code>{{range .Lines}}{{if .Command}}<span class='line command'>{{.Text}}</span>{{else}}<span class='line'>{{.Text}}</span>{{end}}{{end}}
 </code></pre></td>
         </tr>
       </tbody>

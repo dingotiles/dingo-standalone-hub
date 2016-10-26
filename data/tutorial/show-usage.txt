@@ -1,4 +1,4 @@
-docker run dingotiles/dingo-postgresql
+# docker run dingotiles/dingo-postgresql
  ____  _
 |  _ \(_)_ __   __ _  ___
 | | | | | '_ \ / _` |/ _ \
