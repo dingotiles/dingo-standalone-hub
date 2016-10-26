@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 
@@ -14,12 +15,32 @@ import (
 func main() {
 	m := martini.Classic()
 	m.Use(render.Renderer(render.Options{
-		Directory:  "templates",
+		Directory:  "public",
 		Extensions: []string{".tmpl", ".html"},
 		IndentJSON: true, // Output human readable JSON
 	}))
 	m.Get("/", func(r render.Render) {
 		r.HTML(200, "terminal-demo", "")
+	})
+	m.Get("/tutorial/:tutorial", func(params martini.Params, r render.Render, res http.ResponseWriter) {
+		data, err := Asset(fmt.Sprintf("data/tutorial/%s.txt", params["tutorial"]))
+		if err != nil {
+			res.WriteHeader(404)
+			return
+		}
+		command_output_lines := strings.Split(string(data), "\n")
+		tutorialData := struct {
+			Tutorial string
+			Prompt   string
+			Command  string
+			Output   []string
+		}{
+			Tutorial: params["tutorial"],
+			Prompt:   "#",
+			Command:  command_output_lines[0],
+			Output:   command_output_lines[1:],
+		}
+		r.HTML(200, "tutorial", tutorialData)
 	})
 	m.Get("/health", func(r render.Render) {
 		r.JSON(200, map[string]interface{}{"health": "ok"})

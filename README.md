@@ -24,3 +24,14 @@ cf set-env dingo-api WAL_S3_BUCKET ${WAL_S3_BUCKET:?required}
 cf set-env dingo-api WALE_S3_ENDPOINT ${WALE_S3_ENDPOINT:?required}
 cf start
 ```
+
+## Development
+
+Static assets - like the text for tutorial terminal windows - is stored in `data/` directory, and is embedded in the golang application within `bindata.go`.
+
+Anytime `data/` contents are changed, regenerate `bindata.go` using:
+
+```
+go get -u github.com/jteeuwen/go-bindata/...
+go-bindata data/...
+```

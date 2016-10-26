@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{.Tutorial}}</title>
+    <link rel="stylesheet" href="/css/terminal.css" media="screen" title="no title">
+  </head>
+  <body>
+    <div class="terminal-window">
+      <nav class="control-window">
+        <a href="#" class="close">close</a>
+        <a href="#" class="minimize">minimize</a>
+        <a href="#" class="deactivate">deactivate</a>
+      </nav>
+      <h1 class="titleInside">Terminal</h1>
+      <div class="container">
+        <div class="terminal">
+          <table>
+            <tbody>
+              <tr>
+                <td class='gutter'><pre class='line-numbers'><span class='line-number'>{{.Prompt}}</span>
+{{range .Output}}<span class='line-number'>&nbsp;</span>
+{{end}}
+</pre></td>
+<td class='code'><pre><code><span class='line command'>{{.Command}}</span>
+{{range .Output}}{{.}}
+{{end}}
+</code></pre></td>
+        </tr>
+      </tbody>
+    </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
