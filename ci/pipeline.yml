@@ -1,4 +1,8 @@
 ---
+groups:
+- name: deploy
+  jobs: [deploy-prod]
+
 jobs:
 - name: deploy-prod
   public: true
