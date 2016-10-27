@@ -1,0 +1,13 @@
+# docker stop dingo-postgresql
+dingo-postgresql
+# docker rm dingo-postgresql
+dingo-postgresql
+
+# docker run -d \
+  --name dingo-postgresql \
+  -e DOCKER_HOST_IP=${DOCKER_HOST_IP:?required} \
+  -e DOCKER_HOST_PORT_5432=${PUBLIC_PORT:-5000} -p ${PUBLIC_PORT:-5000}:5432 \
+  -e DINGO_ORG_TOKEN=global-org \
+  -e DINGO_CLUSTER=demo-cluster-aBZ34c \
+  dingotiles/dingo-postgresql
+b1d65d8edcac3b48c5650f0be895fc2806baf3fd61334d75f05034d71be62a7c

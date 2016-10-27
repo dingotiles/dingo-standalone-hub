@@ -1,0 +1,12 @@
+# create table demo (value text);
+CREATE TABLE
+# insert into demo values ('row1');
+INSERT 0 1
+# insert into demo values ('row2');
+INSERT 0 1
+# select * FROM demo;
+ value
+-------
+ row1
+ row2
+(2 rows)

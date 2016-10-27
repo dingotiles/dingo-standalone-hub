@@ -1,0 +1,7 @@
+# select pg_switch_xlog();
+ pg_switch_xlog
+----------------
+ 0/25000078
+(1 row)
+
+# \q
