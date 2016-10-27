@@ -1,0 +1,45 @@
+---
+jobs:
+- name: deploy-prod
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - {get: api, trigger: true}
+    - {get: api-ci}
+  - put: deploy-prod
+    params:
+      manifest: api/manifest.yml
+      path: api
+      current_app_name: dingo-api
+      environment_variables:
+        AWS_ACCESS_KEY_ID: {{cf_prod_env_aws_access_key_id}}
+        AWS_SECRET_ACCESS_KEY: {{cf_prod_env_aws_secret_access_key}}
+        ETCD_HOST_PORT: {{cf_prod_env_etcd_host_port}}
+        WALE_S3_ENDPOINT: {{cf_prod_env_wale_s3_endpoint}}
+        WAL_S3_BUCKET: {{cf_prod_env_wal_s3_bucket}}
+
+resources:
+- name: api
+  type: git
+  source:
+    uri: git@github.com:dingotiles/dingo-api.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-private-key}}
+
+- name: api-ci
+  type: git
+  source:
+    uri: git@github.com:dingotiles/dingo-api.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-private-key}}
+
+- name: deploy-prod
+  type: cf
+  source:
+    api: {{cf_prod_api}}
+    username: {{cf_prod_username}}
+    password: {{cf_prod_password}}
+    organization: {{cf_prod_org}}
+    space: {{cf_prod_space}}
+    skip_cert_check: false

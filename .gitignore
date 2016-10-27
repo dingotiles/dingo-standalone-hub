@@ -29,3 +29,4 @@ _testmain.go
 gin-bin
 .DS_Store
 .envrc
+credentials.yml

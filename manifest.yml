@@ -6,3 +6,5 @@ applications:
     GOVERSION: go1.7
     GOPACKAGENAME: dingo-api
   stack: cflinuxfs2
+  routes:
+  - route: api.dingotiles.com
