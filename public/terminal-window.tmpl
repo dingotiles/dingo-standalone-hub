@@ -5,7 +5,7 @@
     <a href="#" class="deactivate">deactivate</a>
   </nav>
   <h1 class="titleInside">{{.Title}}</h1>
-  <div class="container">
+  <div class="terminal-container">
     <div class="terminal">
       <table>
         <tbody>
@@ -26,7 +26,7 @@
     {{- if .Command -}}
     <span class='line command'>{{ .Text }}</span>
     {{- else -}}
-    <span class='line'>{{or .Text " "}}</span>{{end}}
+    <span class='line output'>{{or .Text " "}}</span>{{end}}
   {{- end -}}
 </code></pre></td>
           </tr>

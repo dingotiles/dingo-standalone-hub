@@ -16,7 +16,7 @@
   opacity:1;
 }
 
-.container {
+.terminal-container {
   border-radius: 5px;
 }
 
@@ -130,6 +130,7 @@ div.terminal {
 
 div.terminal pre.line-numbers span {
   display: inline;
+  color: #BBB;
 }
 
 div.terminal span.command { color: #FFF; }
