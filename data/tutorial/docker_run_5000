@@ -6,6 +6,7 @@
   -e DINGO_CLUSTER=demo-cluster-Rtti7O \
   dingotiles/dingo-postgresql:latest
 94d1830c64b0237e0c91d8009be54b2b4c91c81f3a2bb47599d4d1447eec4a45
+
 # docker logs dingo-postgresql
 ...
 patroni> The files belonging to this database system will be owned by user "postgres".

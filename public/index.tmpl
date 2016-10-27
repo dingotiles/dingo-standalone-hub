@@ -1,6 +1,19 @@
 
+<h1>Dingo PostgreSQL for Docker</h1>
 {{template "terminal-window" .TerminalWindows.get_started}}
+
+<h2>Getting started</h2>
+Simply run the container to see the getting started sample.
 {{template "terminal-window" .TerminalWindows.show_usage}}
+
+To discover your Docker machine's `DOCKER_HOST_IP` you can try:
 {{template "terminal-window" .TerminalWindows.docker_host_ip_dockermac}}
+
+Or if you are using `docker-machine` try:
 {{template "terminal-window" .TerminalWindows.docker_host_ip_docker_machine}}
+
+Now run a container and you will have a continously archiving PostgreSQL.
 {{template "terminal-window" .TerminalWindows.docker_run_5000}}
+
+You can now connect to the database.
+{{template "terminal-window" .TerminalWindows.postgres_uri}}

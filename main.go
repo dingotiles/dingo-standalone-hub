@@ -29,7 +29,7 @@ func main() {
 			res.WriteHeader(500)
 			return
 		}
-		fmt.Println(tutorialFiles)
+		fmt.Println("Tutorial files loaded:", tutorialFiles)
 		tutorialData := map[string]string{}
 		for _, tutorialFile := range tutorialFiles {
 			data, err := Asset(filepath.Join("data/tutorial", tutorialFile))
