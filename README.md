@@ -35,3 +35,9 @@ Anytime `data/` contents are changed, regenerate `bindata.go` using:
 go get -u github.com/jteeuwen/go-bindata/...
 go-bindata data/...
 ```
+
+To run the local tests:
+
+```
+go test $(go list ./... | grep -v /vendor/)
+```
