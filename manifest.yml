@@ -3,5 +3,6 @@ applications:
   memory: 64M
   buildpack: go_buildpack
   env:
+    GOVERSION: go1.7
     GOPACKAGENAME: dingo-api
   stack: cflinuxfs2
