@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/codegangsta/martini-contrib/binding"
@@ -17,20 +18,37 @@ func main() {
 	m := martini.Classic()
 	m.Use(render.Renderer(render.Options{
 		Directory:  "public",
+		Layout:     "layout",
 		Extensions: []string{".tmpl", ".html"},
 		IndentJSON: true, // Output human readable JSON
 	}))
-	m.Get("/", func(r render.Render) {
-		r.HTML(200, "terminal-demo", "")
-	})
-	m.Get("/tutorial/:tutorial", func(params martini.Params, r render.Render, res http.ResponseWriter) {
-		data, err := Asset(fmt.Sprintf("data/tutorial/%s.txt", params["tutorial"]))
+	m.Get("/", func(r render.Render, res http.ResponseWriter) {
+		tutorialFiles, err := AssetDir("data/tutorial")
 		if err != nil {
-			res.WriteHeader(404)
+			fmt.Errorf("Could not load assets from data/tutorial/: %s", err)
+			res.WriteHeader(500)
 			return
 		}
-		tutorialData := terminal.NewWindow(string(data), params["tutorial"])
-		r.HTML(200, "tutorial", tutorialData)
+		fmt.Println(tutorialFiles)
+		tutorialData := map[string]string{}
+		for _, tutorialFile := range tutorialFiles {
+			data, err := Asset(filepath.Join("data/tutorial", tutorialFile))
+			if err != nil {
+				fmt.Errorf("Could not load asset %s: %s", tutorialFile, err)
+				continue
+			}
+			tutorialData[tutorialFile] = string(data)
+		}
+		terminalWindows, err := terminal.LoadWindowsFromData(tutorialData)
+
+		page := struct {
+			PageTitle       string
+			TerminalWindows map[string]*terminal.Window
+		}{
+			"Dingo PostgreSQL for Docker",
+			terminalWindows,
+		}
+		r.HTML(200, "index", page)
 	})
 	m.Get("/health", func(r render.Render) {
 		r.JSON(200, map[string]interface{}{"health": "ok"})

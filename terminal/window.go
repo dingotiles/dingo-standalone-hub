@@ -3,6 +3,7 @@ package terminal
 import "strings"
 
 type Window struct {
+	Title   string
 	Label   string
 	Prompt  string
 	Command string
@@ -17,6 +18,7 @@ type WindowLine struct {
 func NewWindow(commands_and_output string, label string) (window *Window) {
 	command_output_lines := strings.Split(commands_and_output, "\n")
 	window = &Window{
+		Title:  "Terminal",
 		Label:  label,
 		Prompt: "#",
 		Lines:  make([]WindowLine, len(command_output_lines)),

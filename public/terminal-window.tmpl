@@ -1,0 +1,37 @@
+<div class="terminal-window" id="${{.Label}}">
+  <nav class="control-window">
+    <a href="#" class="close">close</a>
+    <a href="#" class="minimize">minimize</a>
+    <a href="#" class="deactivate">deactivate</a>
+  </nav>
+  <h1 class="titleInside">{{.Title}}</h1>
+  <div class="container">
+    <div class="terminal">
+      <table>
+        <tbody>
+          <tr>
+{{$prompt := .Prompt}}
+<td class='gutter'><pre class='line-numbers'>
+{{- range .Lines -}}
+<span class='line-number'>
+  {{- if .Command -}}
+    {{- $prompt -}}
+  {{- else -}}
+    &nbsp;
+  {{- end -}}
+</span>
+{{end}}</pre></td>
+<td class='code'><pre><code>
+  {{- range .Lines -}}
+    {{- if .Command -}}
+    <span class='line command'>{{ .Text }}</span>
+    {{- else -}}
+    <span class='line'>{{.Text}}</span>{{end}}
+  {{- end -}}
+</code></pre></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
