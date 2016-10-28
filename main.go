@@ -23,23 +23,12 @@ func main() {
 		IndentJSON: true, // Output human readable JSON
 	}))
 	m.Get("/tutorial", func(r render.Render, res http.ResponseWriter) {
-		tutorialFiles, err := AssetDir("data/tutorial")
+		terminalWindows, err := buildTerminalWindows()
 		if err != nil {
 			fmt.Errorf("Could not load assets from data/tutorial/: %s", err)
 			res.WriteHeader(500)
 			return
 		}
-		fmt.Println("Tutorial files loaded:", tutorialFiles)
-		tutorialData := map[string]string{}
-		for _, tutorialFile := range tutorialFiles {
-			data, err := Asset(filepath.Join("data/tutorial", tutorialFile))
-			if err != nil {
-				fmt.Errorf("Could not load asset %s: %s", tutorialFile, err)
-				continue
-			}
-			tutorialData[tutorialFile] = string(data)
-		}
-		terminalWindows := terminal.LoadWindowsFromData(tutorialData)
 
 		page := struct {
 			PageTitle       string
@@ -132,4 +121,22 @@ func constructReturnedEnvVars(patroniScope string, environ []string) []string {
 		}
 	}
 	return environ
+}
+
+func buildTerminalWindows() (windows map[string]*terminal.Window, err error) {
+	tutorialFiles, err := AssetDir("data/tutorial")
+	if err != nil {
+		return windows, err
+	}
+	fmt.Println("Tutorial files loaded:", tutorialFiles)
+	tutorialData := map[string]string{}
+	for _, tutorialFile := range tutorialFiles {
+		data, err := Asset(filepath.Join("data/tutorial", tutorialFile))
+		if err != nil {
+			fmt.Errorf("Could not load asset %s: %s", tutorialFile, err)
+			continue
+		}
+		tutorialData[tutorialFile] = string(data)
+	}
+	return terminal.LoadWindowsFromData(tutorialData), nil
 }
