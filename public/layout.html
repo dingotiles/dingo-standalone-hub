@@ -18,8 +18,10 @@
     <![endif]-->
   </head>
   <body>
-    <div class="container">
-      {{ yield }}
+    <div class="container-fluid">
+      <nav class="navbar navbar-default">
+        {{template "_navbar" .}}
+        {{ yield }}
     </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
