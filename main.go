@@ -22,7 +22,7 @@ func main() {
 		Extensions: []string{".tmpl", ".html"},
 		IndentJSON: true, // Output human readable JSON
 	}))
-	m.Get("/", func(r render.Render, res http.ResponseWriter) {
+	m.Get("/tutorial", func(r render.Render, res http.ResponseWriter) {
 		tutorialFiles, err := AssetDir("data/tutorial")
 		if err != nil {
 			fmt.Errorf("Could not load assets from data/tutorial/: %s", err)
@@ -39,7 +39,7 @@ func main() {
 			}
 			tutorialData[tutorialFile] = string(data)
 		}
-		terminalWindows, err := terminal.LoadWindowsFromData(tutorialData)
+		terminalWindows := terminal.LoadWindowsFromData(tutorialData)
 
 		page := struct {
 			PageTitle       string
