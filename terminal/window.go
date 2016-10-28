@@ -18,7 +18,7 @@ type WindowLine struct {
 func NewWindow(commands_and_output string, label string) (window *Window) {
 	command_output_lines := strings.Split(commands_and_output, "\n")
 	window = &Window{
-		Title:  "Terminal",
+		Title:  "Dingo",
 		Label:  label,
 		Prompt: "#",
 		Lines:  make([]WindowLine, len(command_output_lines)),

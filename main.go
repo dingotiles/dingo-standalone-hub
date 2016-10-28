@@ -22,11 +22,20 @@ func main() {
 		Extensions: []string{".tmpl", ".html"},
 		IndentJSON: true, // Output human readable JSON
 	}))
-	m.Get("/", func(r render.Render) {
+	m.Get("/", func(r render.Render, res http.ResponseWriter) {
+		terminalWindows, err := buildTerminalWindows()
+		if err != nil {
+			fmt.Errorf("Could not load assets from data/tutorial/: %s", err)
+			res.WriteHeader(500)
+			return
+		}
+
 		page := struct {
-			PageTitle string
+			PageTitle       string
+			TerminalWindows map[string]*terminal.Window
 		}{
 			"Dingo PostgreSQL for Docker",
+			terminalWindows,
 		}
 		r.HTML(200, "index", page)
 	})
