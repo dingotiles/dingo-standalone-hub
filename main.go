@@ -145,7 +145,7 @@ func buildTerminalWindows() (windows map[string]*terminal.Window, err error) {
 	if err != nil {
 		return windows, err
 	}
-	fmt.Println("Tutorial files loaded:", tutorialFiles)
+	// fmt.Println("Tutorial files loaded:", tutorialFiles)
 	tutorialData := map[string]string{}
 	for _, tutorialFile := range tutorialFiles {
 		data, err := Asset(filepath.Join("data/tutorial", tutorialFile))
