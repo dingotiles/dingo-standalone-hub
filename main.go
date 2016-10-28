@@ -22,6 +22,14 @@ func main() {
 		Extensions: []string{".tmpl", ".html"},
 		IndentJSON: true, // Output human readable JSON
 	}))
+	m.Get("/", func(r render.Render) {
+		page := struct {
+			PageTitle string
+		}{
+			"Dingo PostgreSQL for Docker",
+		}
+		r.HTML(200, "index", page)
+	})
 	m.Get("/tutorial", func(r render.Render, res http.ResponseWriter) {
 		terminalWindows, err := buildTerminalWindows()
 		if err != nil {
@@ -37,7 +45,7 @@ func main() {
 			"Dingo PostgreSQL for Docker",
 			terminalWindows,
 		}
-		r.HTML(200, "index", page)
+		r.HTML(200, "tutorial", page)
 	})
 	m.Get("/health", func(r render.Render) {
 		r.JSON(200, map[string]interface{}{"health": "ok"})
