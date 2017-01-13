@@ -90,7 +90,9 @@ func main() {
 				},
 			},
 			"etcd": map[string]interface{}{
-				"uri": os.Getenv("ETCD_HOST_PORT"),
+				"uri":      os.Getenv("ETCD_HOST_PORT"),
+				"username": os.Getenv("ETCD_USERNAME"),
+				"password": os.Getenv("ETCD_PASSWORD"),
 			},
 		}
 		r.JSON(200, staticResponse)
