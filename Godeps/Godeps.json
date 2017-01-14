@@ -23,7 +23,7 @@
 		},
 		{
 			"ImportPath": "github.com/dingotiles/dingo-postgresql-agent/config",
-			"Rev": "06ecfcf8999a98440331e2d27e7f754640be3f99"
+			"Rev": "8ffc39e5cee9ff5901ce6fda8fccc1656dbe2a04"
 		},
 		{
 			"ImportPath": "github.com/go-martini/martini",
@@ -50,6 +50,18 @@
 		{
 			"ImportPath": "gopkg.in/yaml.v1",
 			"Rev": "9f9df34309c04878acc86042b16630b0f696e1de"
+		},
+		{
+			"ImportPath": "github.com/dingotiles/dingo-postgresql-agent/vendor/github.com/hashicorp/errwrap",
+			"Rev": "8ffc39e5cee9ff5901ce6fda8fccc1656dbe2a04"
+		},
+		{
+			"ImportPath": "github.com/dingotiles/dingo-postgresql-agent/vendor/github.com/kelseyhightower/envconfig",
+			"Rev": "8ffc39e5cee9ff5901ce6fda8fccc1656dbe2a04"
+		},
+		{
+			"ImportPath": "github.com/dingotiles/dingo-postgresql-agent/vendor/gopkg.in/yaml.v1",
+			"Rev": "8ffc39e5cee9ff5901ce6fda8fccc1656dbe2a04"
 		}
 	]
 }
