@@ -8,3 +8,4 @@ applications:
   stack: cflinuxfs2
   routes:
   - route: api.dingotiles.com
+  - route: standalone.dingotiles.com
