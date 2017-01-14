@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
+	"time"
 
 	"github.com/codegangsta/martini-contrib/binding"
 	"github.com/dingotiles/dingo-api/terminal"
@@ -14,7 +17,12 @@ import (
 	"github.com/martini-contrib/render"
 )
 
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const clusterNameRandomLength = 6
+
 func main() {
+	rand.Seed(time.Now().UnixNano())
+
 	m := martini.Classic()
 	m.Use(render.Renderer(render.Options{
 		Directory:  "public",
@@ -144,6 +152,7 @@ func constructReturnedEnvVars(patroniScope string, environ []string) []string {
 }
 
 func buildTerminalWindows() (windows map[string]*terminal.Window, err error) {
+	clusterName := randomTutorialClusterName()
 	tutorialFiles, err := AssetDir("data/tutorial")
 	if err != nil {
 		return windows, err
@@ -156,7 +165,21 @@ func buildTerminalWindows() (windows map[string]*terminal.Window, err error) {
 			fmt.Errorf("Could not load asset %s: %s", tutorialFile, err)
 			continue
 		}
-		tutorialData[tutorialFile] = string(data)
+		tutorialData[tutorialFile] = string(replaceClusterName(data, clusterName))
 	}
 	return terminal.LoadWindowsFromData(tutorialData), nil
+}
+
+func randomTutorialClusterName() string {
+	randomSuffix := make([]byte, clusterNameRandomLength)
+	for i := range randomSuffix {
+		randomSuffix[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+
+	return fmt.Sprintf("demo-cluster-%s", randomSuffix)
+}
+
+func replaceClusterName(template []byte, clusterName string) []byte {
+	re := regexp.MustCompile("demo-cluster-replaceme")
+	return re.ReplaceAll(template, []byte(clusterName))
 }
