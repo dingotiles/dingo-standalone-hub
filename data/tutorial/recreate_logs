@@ -6,12 +6,12 @@ patroni> FATAL:  the database system is starting up
 ...
 
 ...
-patroni>         STRUCTURED: time=2016-10-27T03:25:06.985139-00 pid=6303 action=wal-fetch key=s3://dingo-api-dev-drnic/backups/demo-cluster-aBZ34c/wal/wal_005/000000010000000000000026.lzo prefix=backups/demo-cluster-aBZ34c/wal/ seg=000000010000000000000026 state=begin
+patroni>         STRUCTURED: time=2016-10-27T03:25:06.985139-00 pid=6303 action=wal-fetch key=s3://dingo-api-dev-drnic/backups/demo-cluster-replaceme/wal/wal_005/000000010000000000000026.lzo prefix=backups/demo-cluster-replaceme/wal/ seg=000000010000000000000026 state=begin
 patroni> lzop: short read
 patroni> wal_e.blobstore.s3.s3_util INFO     MSG: could no longer locate object while performing wal restore
-patroni>         DETAIL: The absolute URI that could not be located is s3://dingo-api-dev-drnic/backups/demo-cluster-aBZ34c/wal/wal_005/000000010000000000000026.lzo.
+patroni>         DETAIL: The absolute URI that could not be located is s3://dingo-api-dev-drnic/backups/demo-cluster-replaceme/wal/wal_005/000000010000000000000026.lzo.
 patroni>         HINT: This can be normal when Postgres is trying to detect what timelines are available during restoration.
 patroni>         STRUCTURED: time=2016-10-27T03:25:07.228217-00 pid=6303
 patroni> wal_e.operator.backup INFO     MSG: complete wal restore
-patroni>         STRUCTURED: time=2016-10-27T03:25:07.229969-00 pid=6303 action=wal-fetch key=s3://dingo-api-dev-drnic/backups/demo-cluster-aBZ34c/wal/wal_005/000000010000000000000026.lzo prefix=backups/demo-cluster-aBZ34c/wal/ seg=000000010000000000000026 state=complete
+patroni>         STRUCTURED: time=2016-10-27T03:25:07.229969-00 pid=6303 action=wal-fetch key=s3://dingo-api-dev-drnic/backups/demo-cluster-replaceme/wal/wal_005/000000010000000000000026.lzo prefix=backups/demo-cluster-replaceme/wal/ seg=000000010000000000000026 state=complete
 ...

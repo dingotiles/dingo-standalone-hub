@@ -16,7 +16,7 @@ How to run:
     -e DOCKER_HOST_IP=${DOCKER_HOST_IP:?required} \
     -e DOCKER_HOST_PORT_5432=${PUBLIC_PORT} -p ${PUBLIC_PORT}:5432 \
     -e DINGO_ORG_TOKEN=global-org \
-    -e DINGO_CLUSTER=demo-cluster-GKhv2q \
+    -e DINGO_CLUSTER=demo-cluster-replaceme \
     dingotiles/dingo-postgresql:latest
 
 How to get direct PostgreSQL URI:
