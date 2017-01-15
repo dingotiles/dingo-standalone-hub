@@ -20,6 +20,7 @@ jobs:
         AWS_ACCESS_KEY_ID: {{cf_prod_env_aws_access_key_id}}
         AWS_SECRET_ACCESS_KEY: {{cf_prod_env_aws_secret_access_key}}
         ETCD_HOST_PORT: {{cf_prod_env_etcd_host_port}}
+        ETCD_PROTOCOL: {{cf_prod_env_etcd_protocol}}
         ETCD_USERNAME: {{cf_prod_env_etcd_username}}
         ETCD_PASSWORD: {{cf_prod_env_etcd_password}}
         WALE_S3_ENDPOINT: {{cf_prod_env_wale_s3_endpoint}}
