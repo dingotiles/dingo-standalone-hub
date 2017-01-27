@@ -33,7 +33,7 @@ func main() {
 	m.Get("/", func(r render.Render, res http.ResponseWriter) {
 		terminalWindows, err := buildTerminalWindows()
 		if err != nil {
-			fmt.Errorf("Could not load assets from data/tutorial/: %s", err)
+			fmt.Fprintf(os.Stderr, "Could not load assets from data/tutorial/: %s", err)
 			res.WriteHeader(500)
 			return
 		}
@@ -50,7 +50,7 @@ func main() {
 	m.Get("/tutorial", func(r render.Render, res http.ResponseWriter) {
 		terminalWindows, err := buildTerminalWindows()
 		if err != nil {
-			fmt.Errorf("Could not load assets from data/tutorial/: %s", err)
+			fmt.Fprintf(os.Stderr, "Could not load assets from data/tutorial/: %s", err)
 			res.WriteHeader(500)
 			return
 		}
@@ -162,7 +162,7 @@ func buildTerminalWindows() (windows map[string]*terminal.Window, err error) {
 	for _, tutorialFile := range tutorialFiles {
 		data, err := Asset(filepath.Join("data/tutorial", tutorialFile))
 		if err != nil {
-			fmt.Errorf("Could not load asset %s: %s", tutorialFile, err)
+			fmt.Fprintf(os.Stderr, "Could not load asset %s: %s", tutorialFile, err)
 			continue
 		}
 		tutorialData[tutorialFile] = string(replaceClusterName(data, clusterName))
