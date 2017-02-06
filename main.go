@@ -20,6 +20,8 @@ import (
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const clusterNameRandomLength = 6
 
+var missingRequiredEnvs = []string{}
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
@@ -71,40 +73,41 @@ func main() {
 		fmt.Printf("Recv: container start request: %v\n", req)
 		name := "patroni1"
 		patroniScope := req.ClusterName
-		waleEnvVars := constructReturnedEnvVars(patroniScope, filterWaleEnvVars())
-		staticResponse := map[string]interface{}{
-			"cluster": map[string]interface{}{
-				"name":  name,
-				"scope": patroniScope,
-			},
-			"wale_env": waleEnvVars,
-			// Example:
-			// 	AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
-			// 	AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
-			// 	WAL_S3_BUCKET=WAL_S3_BUCKET
-			// 	WALE_S3_ENDPOINT=https+path://s3.amazonaws.com:443
-			// 	WALE_S3_PREFIX=s3://${WAL_S3_BUCKET}/backups/test-cluster-scope/wal/
-			"postgresql": map[string]interface{}{
-				"admin": map[string]interface{}{
-					"password": "admin-password",
-				},
-				"superuser": map[string]interface{}{
-					"username": "superuser-username",
-					"password": "superuser-password",
-				},
-				"appuser": map[string]interface{}{
-					"username": "appuser-username",
-					"password": "appuser-password",
-				},
-			},
-			"etcd": map[string]interface{}{
-				"uri":      os.Getenv("ETCD_HOST_PORT"),
-				"protocol": os.Getenv("ETCD_PROTOCOL"),
-				"username": os.Getenv("ETCD_USERNAME"),
-				"password": os.Getenv("ETCD_PASSWORD"),
-			},
+
+		missingRequiredEnvs = []string{}
+
+		clusterSpec := config.ClusterSpecification{}
+		clusterSpec.Cluster.Name = name
+		clusterSpec.Cluster.Scope = patroniScope
+
+		if os.Getenv("AWS_ACCESS_KEY_ID") != "" {
+			clusterSpec.Archives.Method = "s3"
+			clusterSpec.Archives.S3.AWSAccessKeyID = requiredEnv("AWS_ACCESS_KEY_ID")
+			clusterSpec.Archives.S3.AWSSecretAccessID = requiredEnv("AWS_SECRET_ACCESS_KEY")
+			clusterSpec.Archives.S3.S3Bucket = requiredEnv("WAL_S3_BUCKET")
+			clusterSpec.Archives.S3.S3Endpoint = requiredEnv("WALE_S3_ENDPOINT")
+		} else if os.Getenv("LOCAL_BACKUP_VOLUME") != "" {
+			clusterSpec.Archives.Method = "local"
+			clusterSpec.Archives.Local.LocalBackupVolume = requiredEnv("LOCAL_BACKUP_VOLUME")
+		} else {
+			missingRequiredEnvs = append(missingRequiredEnvs, "AWS_ACCESS_KEY_ID or LOCAL_BACKUP_VOLUME")
 		}
-		r.JSON(200, staticResponse)
+
+		clusterSpec.Etcd.URI = requiredEnv("ETCD_URI")
+
+		clusterSpec.Postgresql.Admin.Password = "admin-password"
+		clusterSpec.Postgresql.Superuser.Username = "superuser-username"
+		clusterSpec.Postgresql.Superuser.Password = "superuser-password"
+		clusterSpec.Postgresql.Appuser.Username = "appuser-username"
+		clusterSpec.Postgresql.Appuser.Password = "appuser-password"
+
+		if len(missingRequiredEnvs) != 0 {
+			fmt.Println("Missing required env:", missingRequiredEnvs)
+			r.JSON(500, map[string]interface{}{"missing-env": missingRequiredEnvs})
+			return
+		}
+
+		r.JSON(200, clusterSpec)
 	})
 	m.Run()
 }
@@ -182,4 +185,11 @@ func randomTutorialClusterName() string {
 func replaceClusterName(template []byte, clusterName string) []byte {
 	re := regexp.MustCompile("demo-cluster-replaceme")
 	return re.ReplaceAll(template, []byte(clusterName))
+}
+
+func requiredEnv(envKey string) string {
+	if os.Getenv(envKey) == "" {
+		missingRequiredEnvs = append(missingRequiredEnvs, envKey)
+	}
+	return os.Getenv(envKey)
 }

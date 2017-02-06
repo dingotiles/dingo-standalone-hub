@@ -12,10 +12,10 @@ import (
 	"gopkg.in/yaml.v1"
 )
 
-// PatroniV11Specification is constructed based on ClusterSpecification provided by the API.
+// PatroniV12Specification is constructed based on ClusterSpecification provided by the API.
 // It is converted to a patroni.yml and used by Patroni to configure & run PostgreSQL.
-// The scheme is for Patroni v1.1
-type PatroniV11Specification struct {
+// The scheme is for Patroni v1.2
+type PatroniV12Specification struct {
 	Scope     string `yaml:"scope"`
 	Namespace string `yaml:"namespace"`
 	Name      string `yaml:"name"`
@@ -24,8 +24,9 @@ type PatroniV11Specification struct {
 		ConnectAddress string `yaml:"connect_address"`
 	} `yaml:"restapi"`
 	Etcd struct {
-		Host     string `yaml:"host"`
-		URL      string `yaml:"url,omitempty"`
+		URL      string `yaml:"url"`
+		Host     string `yaml:"host,omitempty"`
+		Port     int    `yaml:"port,omitempty"`
 		Protocol string `yaml:"protocol,omitempty"`
 		Username string `yaml:"username,omitempty"`
 		Password string `yaml:"password,omitempty"`
@@ -111,10 +112,10 @@ type PatroniV11Specification struct {
 	} `yaml:"tags"`
 }
 
-var defaultPatroniSpec *PatroniV11Specification
+var defaultPatroniSpec *PatroniV12Specification
 
 // BuildPatroniSpec merges cluster config with defaults
-func BuildPatroniSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) (patroniSpec *PatroniV11Specification, err error) {
+func BuildPatroniSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) (patroniSpec *PatroniV12Specification, err error) {
 	patroniSpec, err = DefaultPatroniSpec()
 	if err != nil {
 		return
@@ -124,7 +125,7 @@ func BuildPatroniSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *Host
 }
 
 // DefaultPatroniSpec provides default patroni v1.1 config
-func DefaultPatroniSpec() (*PatroniV11Specification, error) {
+func DefaultPatroniSpec() (*PatroniV12Specification, error) {
 	if defaultPatroniSpec == nil {
 		filename, err := filepath.Abs(APISpec().PatroniDefaultPath)
 		if err != nil {
@@ -134,7 +135,7 @@ func DefaultPatroniSpec() (*PatroniV11Specification, error) {
 		if err != nil {
 			return nil, err
 		}
-		defaultPatroniSpec = &PatroniV11Specification{}
+		defaultPatroniSpec = &PatroniV12Specification{}
 		err = yaml.Unmarshal(yamlFile, defaultPatroniSpec)
 		if err != nil {
 			return nil, err
@@ -144,13 +145,10 @@ func DefaultPatroniSpec() (*PatroniV11Specification, error) {
 }
 
 // MergeClusterSpec builds patroni v1.1 config specification
-func (patroniSpec *PatroniV11Specification) MergeClusterSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) {
+func (patroniSpec *PatroniV12Specification) MergeClusterSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) {
 	appuserName := clusterSpec.Postgresql.Appuser.Username
 	replicationUsername := appuserName
-	patroniSpec.Etcd.Host = clusterSpec.Etcd.URI
-	patroniSpec.Etcd.Protocol = clusterSpec.Etcd.Protocol
-	patroniSpec.Etcd.Username = clusterSpec.Etcd.Username
-	patroniSpec.Etcd.Password = clusterSpec.Etcd.Password
+	patroniSpec.Etcd.URL = clusterSpec.Etcd.URI
 	patroniSpec.Scope = clusterSpec.Cluster.Scope
 	patroniSpec.Name = clusterSpec.Cluster.Name
 	patroniSpec.Bootstrap.PgHba = []string{
@@ -167,7 +165,7 @@ func (patroniSpec *PatroniV11Specification) MergeClusterSpec(clusterSpec *Cluste
 	patroniSpec.Restapi.ConnectAddress = fmt.Sprintf("%s:%s", hostDiscoverySpec.IP, hostDiscoverySpec.Port8008)
 }
 
-func (patroniSpec *PatroniV11Specification) String() string {
+func (patroniSpec *PatroniV12Specification) String() string {
 	bytes, err := yaml.Marshal(patroniSpec)
 	if err != nil {
 		panic(err)
@@ -176,7 +174,7 @@ func (patroniSpec *PatroniV11Specification) String() string {
 }
 
 // CreateConfigFile creates a config file from patroni specification
-func (patroniSpec *PatroniV11Specification) CreateConfigFile(path string) (err error) {
+func (patroniSpec *PatroniV12Specification) CreateConfigFile(path string) (err error) {
 	data, err := yaml.Marshal(patroniSpec)
 	if err != nil {
 		return err
@@ -190,7 +188,7 @@ func (patroniSpec *PatroniV11Specification) CreateConfigFile(path string) (err e
 }
 
 // CreateURIFile creates a file containing superuser URI
-func (patroniSpec *PatroniV11Specification) CreateURIFile(createPath string) (err error) {
+func (patroniSpec *PatroniV12Specification) CreateURIFile(createPath string) (err error) {
 	err = os.MkdirAll(path.Dir(createPath), 0755)
 	if err != nil {
 		return errwrap.Wrapf("Cannot mkdir: {{err}}", err)
