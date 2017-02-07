@@ -19,6 +19,7 @@ jobs:
       environment_variables:
         AWS_ACCESS_KEY_ID: {{cf_prod_env_aws_access_key_id}}
         AWS_SECRET_ACCESS_KEY: {{cf_prod_env_aws_secret_access_key}}
+        ETCD_URI: {{cf_prod_env_etcd_uri}}
         ETCD_HOST_PORT: {{cf_prod_env_etcd_host_port}}
         ETCD_PROTOCOL: {{cf_prod_env_etcd_protocol}}
         ETCD_USERNAME: {{cf_prod_env_etcd_username}}
