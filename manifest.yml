@@ -6,3 +6,5 @@ applications:
   routes:
   - route: api.dingotiles.com
   - route: standalone.dingotiles.com
+  services:
+  - hub-pg
