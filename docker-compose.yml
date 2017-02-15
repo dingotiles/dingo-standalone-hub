@@ -59,26 +59,26 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
 
-  # tests:
-  #   build: ./images/tests/
-  #   image: dingo-api-container-tests
-  #   environment:
-  #     TEST_PATRONI_SCOPES: "cluster1"
-  #     DOCKER_HOST_IP:
-  #     ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
-  #     ETCD_HOST: ${DOCKER_HOST_IP}
-  #     ETCD_PORT: 4001
-  #     ETCD_PROTOCOL: http
-  #     ETCD_USERNAME: root
-  #     ETCD_PASSWORD: password
-  #     DINGO_CLUSTER: cluster1
-  #     PATRONI_SCOPE: cluster1
-  #     AWS_ACCESS_KEY_ID: ~
-  #     AWS_SECRET_ACCESS_KEY: ~
-  #     WAL_S3_BUCKET: ~
-  #     AWS_REGION: ~
-  #     APPUSER_USERNAME: appuser-username
-  #     APPUSER_PASSWORD: appuser-password
-  #     SUPERUSER_USERNAME: superuser-username
-  #     SUPERUSER_PASSWORD: superuser-password
-  #     ADMIN_PASSWORD: admin-password
+  tests:
+    build: ./images/tests/
+    image: dingo-hub-tests
+    environment:
+      TEST_PATRONI_SCOPES: "cluster1"
+      DOCKER_HOST_IP:
+      ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
+      ETCD_HOST: ${DOCKER_HOST_IP}
+      ETCD_PORT: 4001
+      ETCD_PROTOCOL: http
+      ETCD_USERNAME: root
+      ETCD_PASSWORD: password
+      DINGO_CLUSTER: cluster1
+      PATRONI_SCOPE: cluster1
+      AWS_ACCESS_KEY_ID: ~
+      AWS_SECRET_ACCESS_KEY: ~
+      WAL_S3_BUCKET: ~
+      AWS_REGION: ~
+      APPUSER_USERNAME: appuser-username
+      APPUSER_PASSWORD: appuser-password
+      SUPERUSER_USERNAME: superuser-username
+      SUPERUSER_PASSWORD: superuser-password
+      ADMIN_PASSWORD: admin-password

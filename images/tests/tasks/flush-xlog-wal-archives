@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e -x
+
+leader_name=$(curl -sk ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/leader | jq -r '.node.value')
+leader_uri=$(curl -sk ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.node.value' | jq -r '.conn_url')
+superuser_uri=$(echo ${leader_uri} \
+  | sed "s%postgres://%postgres://${SUPERUSER_USERNAME}:${SUPERUSER_PASSWORD}@%")
+
+psql ${superuser_uri} -c "select pg_switch_xlog();"
