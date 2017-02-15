@@ -71,14 +71,11 @@ func main() {
 	})
 	m.Post("/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
 		fmt.Printf("Recv: container start request: %v\n", req)
-		name := "patroni1"
-		patroniScope := req.ClusterName
-
 		missingRequiredEnvs = []string{}
 
 		clusterSpec := config.ClusterSpecification{}
-		clusterSpec.Cluster.Name = name
-		clusterSpec.Cluster.Scope = patroniScope
+		clusterSpec.Cluster.Name = req.NodeName
+		clusterSpec.Cluster.Scope = req.ClusterName
 
 		if os.Getenv("AWS_ACCESS_KEY_ID") != "" {
 			clusterSpec.Archives.Method = "s3"
@@ -86,6 +83,13 @@ func main() {
 			clusterSpec.Archives.S3.AWSSecretAccessID = requiredEnv("AWS_SECRET_ACCESS_KEY")
 			clusterSpec.Archives.S3.S3Bucket = requiredEnv("WAL_S3_BUCKET")
 			clusterSpec.Archives.S3.S3Endpoint = requiredEnv("WALE_S3_ENDPOINT")
+		} else if os.Getenv("SSH_HOST") != "" {
+			clusterSpec.Archives.Method = "ssh"
+			clusterSpec.Archives.SSH.Host = requiredEnv("SSH_HOST")
+			clusterSpec.Archives.SSH.Port = requiredEnv("SSH_PORT")
+			clusterSpec.Archives.SSH.User = requiredEnv("SSH_USER")
+			clusterSpec.Archives.SSH.BasePath = requiredEnv("SSH_BASE_PATH")
+			clusterSpec.Archives.SSH.PrivateKey = requiredEnv("SSH_PRIVATE_KEY")
 		} else if os.Getenv("LOCAL_BACKUP_VOLUME") != "" {
 			clusterSpec.Archives.Method = "local"
 			clusterSpec.Archives.Local.LocalBackupVolume = requiredEnv("LOCAL_BACKUP_VOLUME")

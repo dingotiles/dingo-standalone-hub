@@ -21,6 +21,7 @@ type Environ map[string]string
 func NewPatroniEnvironFromClusterSpec(clusterSpec *ClusterSpecification) *Environ {
 	environ := Environ{}
 	environ["REPLICATION_USER"] = clusterSpec.Postgresql.Appuser.Username
+	environ["DINGO_NODE"] = clusterSpec.Cluster.Name
 	environ["PATRONI_SCOPE"] = clusterSpec.Cluster.Scope
 	environ["PG_DATA_DIR"] = "/data/postgres0"
 
@@ -38,6 +39,18 @@ func NewPatroniEnvironFromClusterSpec(clusterSpec *ClusterSpecification) *Enviro
 		volume := clusterSpec.Archives.Local.LocalBackupVolume
 		environ["WALE_LOCAL_PREFIX"] = fmt.Sprintf("local://%s", volume)
 		environ["LOCAL_BACKUP_VOLUME"] = volume
+	}
+	if clusterSpec.UsingWaleSSH() {
+		host := clusterSpec.Archives.SSH.Host
+		basePath := clusterSpec.Archives.SSH.BasePath
+		environ["SSH_HOST"] = host
+		environ["SSH_BASE_PATH"] = basePath
+		environ["SSH_PORT"] = clusterSpec.Archives.SSH.Port
+		environ["SSH_USER"] = clusterSpec.Archives.SSH.User
+		environ["SSH_PRIVATE_KEY"] = clusterSpec.Archives.SSH.PrivateKey
+		environ["WALE_SSH_PREFIX"] = fmt.Sprintf("ssh://%s%s", host, basePath)
+		environ["SSH_IDENTITY_FILE"] = "/home/postgres/.ssh/ssh_backup_storage"
+		// contents of $SSH_IDENTITY_FILE created by agent_wrapper.sh
 	}
 
 	return &environ
@@ -98,7 +111,7 @@ func (environ *Environ) CreateEnvScript(filePath string, chownUser string) (err 
 	}
 
 	for name, value := range *environ {
-		env := fmt.Sprintf("export %s=%s\n", name, value)
+		env := fmt.Sprintf("export %s=\"%s\"\n", name, value)
 		_, err = f.WriteString(env)
 		if err != nil {
 			return errwrap.Wrapf("Cannot create write string to file: {{err}}", err)
