@@ -1,0 +1,22 @@
+<div class="terminal-window" id="<%= window.id %>">
+  <nav class="control-window">
+    <a href="#" class="close">close</a>
+    <a href="#" class="minimize">minimize</a>
+    <a href="#" class="deactivate">deactivate</a>
+  </nav>
+  <h1 class="titleInside">Dingo</h1>
+  <div class="terminal-container">
+    <div class="terminal">
+      <table>
+        <tbody>
+          <tr>
+<td class='gutter'><pre class='line-numbers'><%- window.lines.each do |line| -%>
+  <span class='line-number'><%- if line[:command] -%>#<%- else -%>&nbsp;<%- end -%></span><%- end -%>
+</pre></td>
+<td class='code'><pre><code><% window.lines.each do |line| -%><%- if line[:command] -%><span class='line command'><%= line[:text] %></span><% else %><span class='line output'><%= line[:text] %></span><%- end -%><%- end -%></code></pre></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+# psql $uri -c "select * FROM demo;"
+ value
+-------
+ row1
+ row2
+(2 rows)

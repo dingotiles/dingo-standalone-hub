@@ -1,0 +1,76 @@
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-md-8">
+<h1>Dingo PostgreSQL for Docker</h1>
+
+<%= render partial: "terminal_window", locals: {window: @tutorials["get_started"]} %>
+
+<p>Today is Day 1.</p>
+
+<h2>Installing Docker</h2>
+
+Docker Inc has developed many installers and written up many
+<a href="https://docs.docker.com/engine/installation/">Installation guides</a> getting started with Docker.
+
+<h2>Getting started</h2>
+<p>Simply run the container to see the getting started sample.</p>
+<%= render partial: "terminal_window", locals: {window: @tutorials["show_usage"]} %>
+
+
+<p>To discover your Docker machine's <code>DOCKER_HOST_IP</code> you can try:</p>
+<%= render partial: "terminal_window", locals: {window: @tutorials["docker_host_ip_dockermac"]} %>
+
+
+<p>Or if you are using <code>docker-machine</code> try:</p>
+<%= render partial: "terminal_window", locals: {window: @tutorials["docker_host_ip_docker_machine"]} %>
+
+
+<p>Now run a container and you will have a continously archiving PostgreSQL.</p>
+<%= render partial: "terminal_window", locals: {window: @tutorials["docker_run_5000"]} %>
+
+
+<p>You can now connect to the database.</p>
+<%= render partial: "terminal_window", locals: {window: @tutorials["postgres_uri"]} %>
+
+
+<p>Create a table and insert some data.</p>
+<%= render partial: "terminal_window", locals: {window: @tutorials["insert_data"]} %>
+
+
+<p>Disaster recovery of Dingo PostgreSQL for Docker, or moving of containers,
+requires that the data has been archived to a remote storage facility.
+This is built into Dingo PostgreSQL for Docker automatically.</p>
+
+<p>During the multi-year lifespan of each Dingo PostgreSQL for Docker cluster, it will
+  automatically continously archive all new changes every 10 minutes or sooner for
+  busy databases.</p>
+
+<p>You can request that PostgreSQL archives any recent changes with <code>select pg_switch_xlog()</code>.
+  Then exit <code>psql</code> using <code>\q</code>:</p>
+
+<%= render partial: "terminal_window", locals: {window: @tutorials["pg_switch_xlog"]} %>
+
+
+<p>Destroy the database, and recreate it again (using the same <code>docker run</code>
+  command and environment variables that were initially used) to confirm that it restores itself from the archives automatically.</p>
+
+<%= render partial: "terminal_window", locals: {window: @tutorials["recreate"]} %>
+
+
+<p>Watch the new container's logs to follow its automatically recovery from the continuous archives of the previous container:</p>
+<%= render partial: "terminal_window", locals: {window: @tutorials["recreate_logs"]} %>
+
+
+<p>The new Dingo PostgreSQL for Docker server is fully recovered and operational when the logs start looking like:</p>
+<%= render partial: "terminal_window", locals: {window: @tutorials["recreate_recovery_complete"]} %>
+
+
+<p>Finally, confirm that the inserted data has been recovered.</p>
+<%= render partial: "terminal_window", locals: {window: @tutorials["recreate_recovered_data"]} %>
+
+
+<p>Welcome to Dingo PostgreSQL for Docker, continuously archived from Day 1.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,4 @@
+# docker logs dingo-postgresql -f
+...
+patroni> 2016-10-27 03:26:10,669 INFO: Lock owner: patroni1; I am patroni1
+patroni> 2016-10-27 03:26:10,673 INFO: no action.  i am the leader with the lock

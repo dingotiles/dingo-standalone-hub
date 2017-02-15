@@ -1,0 +1,9 @@
+# docker exec dingo-postgresql cat /config/uri
+postgres://superuser-username:superuser-password@54.145.251.245:5000/postgres
+
+# uri=$(docker exec dingo-postgresql cat /config/uri)
+# psql $uri
+psql (9.5.1, server 9.5.4)
+Type "help" for help.
+
+postgres=#
