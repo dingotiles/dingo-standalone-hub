@@ -2,14 +2,9 @@
 
 set -e -x
 
-SUPERUSER_USERNAME=${SUPERUSER_USERNAME:-superuser-username}
-SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD:-superuser-password}
+leader_name=$(curl -sk ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/leader | jq -r '.node.value')
+leader_uri=$(curl -sk ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.node.value' | jq -r '.conn_url')
+superuser_uri=$(echo ${leader_uri} \
+  | sed "s%postgres://%postgres://${SUPERUSER_USERNAME}:${SUPERUSER_PASSWORD}@%")
 
-for PATRONI_SCOPE in $TEST_PATRONI_SCOPES; do
-  leader_name=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/leader)
-  leader_uri=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.conn_url')
-  superuser_uri=$(echo ${leader_uri} \
-    | sed "s%postgres://%postgres://${SUPERUSER_USERNAME}:${SUPERUSER_PASSWORD}@%")
-
-  psql ${superuser_uri} -c "select pg_switch_xlog();"
-done
+psql ${superuser_uri} -c "select pg_switch_xlog();"

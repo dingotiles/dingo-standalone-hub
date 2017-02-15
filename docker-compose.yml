@@ -8,23 +8,36 @@ services:
     ports: ["5000:8008"]
     environment:
       PORT: 8008
-      ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
+      ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
+      ETCD_HOST: ${DOCKER_HOST_IP}
+      ETCD_PORT: 4001
       ETCD_PROTOCOL: http
+      ETCD_USERNAME: root
+      ETCD_PASSWORD: password
       AWS_ACCESS_KEY_ID: ~
       AWS_SECRET_ACCESS_KEY: ~
       WAL_S3_BUCKET: ~
       WALE_S3_ENDPOINT: ~
+      WALE_S3_PREFIX: ~
+      SSH_HOST: ${DOCKER_HOST_IP}
+      SSH_PORT: 4022
+      SSH_USER: dingo
+      SSH_BASE_PATH: /data/backups/
+      SSH_PRIVATE_KEY: "-----BEGIN RSA PRIVATE KEY-----\\nMIIEpAIBAAKCAQEA2/L5NT+VVp4H7nZkwjSsWwT9GGV5TfyZzWoRQ0evvJZF/f5P\\n/5odCHpLlvk98YDphq4BAu466XNHrX3i+7vzG5Big5AEuwIPgkNddD0mc1O+Ovph\\naNz2jEYSyLgMsemLgeQXq2d1T5i+Q7MG0cDmNkDzqCp/BxoVeLn0JTV8cNMZK+Ym\\nsC6vEXOwRijOML07WNUqaCvn7ZkLNiZfILVuxorCWRAovDhaRwAbPhvyuUABESjp\\nFsS50P3E/cw+kMcdHzzW/iur81JSWDUr6tmjZz9b1iapXzVNhPqHoi5VbzcdT2ag\\n/A0EwYLu3L1jp/1Tvq707LPq50oKoMcW5Gq63QIDAQABAoIBAQCVb/TPr96YFhDP\\nfNMie8Uqpi4LmE4dpWUeAlWuP5Nv7y2oz1OtFxlovCaFcdwbLHn9jlWTlyahnDhz\\n8Jb6cA1RifzU5FHCeTjuSTTCmBV6v8f8rEboh1Bfp/B1PU8qxcGKQ92tEELNDLsg\\npg8ZDhWbgO/LLuxVd+xktPrjGP7ua8vINKgGchGzo7uOqotH9ofv6t3yc6wawTRk\\nfoC6sKVlveiR5RjDbZslTLGmsgkl0L76drKZcsyEfHPPL59kyDCavv7oLgJ8QDS8\\niybzu9RPv9qXLudHhPNK3aY96hwjeIm2l5HUT3U/4Yapq6/iZNrFdySmnqZFq3AU\\nu3njn/DBAoGBAPoP14fwQhvjOsbnIvJFYfAIpDS4SSZ8cprWr5C11FqFWDhY9Gp0\\nuHsIWHlDfKk8e/7S4zu17lA3JKHd01sS3tqa1/Qqqxt6Yiu/P24p8B8yO669HaD3\\nqqtJP6gIX6uBqmF+9HQAGVeiXN+oHb2vMju1cPlUQwMTFzRADfeeO80tAoGBAOEs\\nEnt6Hv7g5a7tUuCUQuCdYfwlv8AlXF9bTVuxxxYAD8VoxtPpNWFr4UCxR6md6rbh\\nRGxtZzzzOjCWDJ3yGnpZZDciGgV5r/FDMqzooTZ0qIwnatCKqDWVbmO9bZSYOF33\\nozKf/WUnzXzsqcIY2OiXQygRXWGqqsrsmFvk+BJxAoGBAMvhwr9JOv115WRq6+lQ\\nfKuyv/9kCfBhIyfvxrFcL0mm0ukOTinGBOv7P/eO+MMbV5XK6A61JRst+qYnML5e\\nwmjGOzEO4PfEbupwQg1WEDu/Pz4XX2Lwy6xgSpB8U1SIohxf4Hv74K286bBJaAZS\\nI8jfBL+k3gZRuGeXmku8LdH5AoGAKIPVj4IZsaKlsSPilaYXonKu/r+MEPan+EBl\\nWupR+BNqwwpnPBnqEO1oSkubqVlQsjc2KIxG1yCsh7F387NsMDeFYKYyKGoMzkxZ\\nAeOZnkK/UPiGr59DRODuS+P5o5MAEWhNZP6EiX7v6lpq8RGndbJB0yPMuZYLxRdt\\nEpvQRwECgYAWgExp3D1BS6iYHhM8bo4lWMtEo9TkUMa9ga8PUJqT/T8kcMbDQA9p\\nYvb+9Fg8G01rtfCPU7DtslvTbgaL6J1zrxTccktszYzLDY19o+ggW4C7WScJTg/z\\n+AHW6JKY9LT6aSD33KJ3ai7Fi00nhLXSywS1BdzwDcqGtRuCAmZylQ==\\n-----END RSA PRIVATE KEY-----"
     command: [dingo-api]
   cluster1-node1:
-    image: dingotiles/dingo-postgresql96-agent:latest
+    image: dingotiles/dingo-postgresql:pre-test
     container_name: cluster1-node1
     ports: ["5432:5432", "8008:8008"]
     environment:
-      # DEBUG: 1
+      DINGO_NODE: node1
       DINGO_CLUSTER: cluster1
-      DINGO_ACCOUNT: org@company.com
+      DINGO_ACCOUNT: test-org
       DINGO_API_URI: http://${DOCKER_HOST_IP}:5000
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}
+      DOCKER_HOST_PORT_5432: 5432
+      DOCKER_HOST_PORT_8008: 8008
+      CELL_GUID: cell1
     depends_on: [etcd]
     command: ["/scripts/entry.sh"]
   etcd:
@@ -47,8 +60,20 @@ services:
     environment:
       TEST_PATRONI_SCOPES: "cluster1"
       DOCKER_HOST_IP:
-      ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
-      AWS_ACCESS_KEY_ID:
-      AWS_SECRET_ACCESS_KEY:
+      ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
+      ETCD_HOST: ${DOCKER_HOST_IP}
+      ETCD_PORT: 4001
+      ETCD_PROTOCOL: http
+      ETCD_USERNAME: root
+      ETCD_PASSWORD: password
+      DINGO_CLUSTER: cluster1
+      PATRONI_SCOPE: cluster1
+      AWS_ACCESS_KEY_ID: ~
+      AWS_SECRET_ACCESS_KEY: ~
       WAL_S3_BUCKET: ~
-      WALE_S3_ENDPOINT: ~
+      AWS_REGION: ~
+      APPUSER_USERNAME: appuser-username
+      APPUSER_PASSWORD: appuser-password
+      SUPERUSER_USERNAME: superuser-username
+      SUPERUSER_PASSWORD: superuser-password
+      ADMIN_PASSWORD: admin-password

@@ -2,7 +2,11 @@
 
 set -e -u
 
-for PATRONI_SCOPE in $TEST_PATRONI_SCOPES; do
+if [[ "${AWS_ACCESS_KEY_ID:-X}" != "X" ]]; then
+  : ${AWS_SECRET_ACCESS_KEY:?required}
+  : ${WAL_S3_BUCKET:?required}
+  : ${PATRONI_SCOPE:?required}
+
   echo "Deleting all backups for cluster '${PATRONI_SCOPE}'..."
   region=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
   if [[ ${region} != 'null' ]]; then
@@ -11,4 +15,4 @@ for PATRONI_SCOPE in $TEST_PATRONI_SCOPES; do
 
   set -x
   aws s3 ${region_option:-} rm --recursive "s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}"
-done
+fi
