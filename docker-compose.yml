@@ -22,7 +22,7 @@ services:
     environment:
       # DEBUG: 1
       DINGO_CLUSTER: cluster1
-      DINGO_ORG_TOKEN: test-org-token
+      DINGO_ACCOUNT: org@company.com
       DINGO_API_URI: http://${DOCKER_HOST_IP}:5000
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}
     depends_on: [etcd]

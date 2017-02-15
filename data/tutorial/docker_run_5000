@@ -2,7 +2,7 @@
   --name dingo-postgresql \
   -e DOCKER_HOST_IP=${DOCKER_HOST_IP:?required} \
   -e DOCKER_HOST_PORT_5432=${PUBLIC_PORT:-5000} -p ${PUBLIC_PORT:-5000}:5432 \
-  -e DINGO_ORG_TOKEN=global-org \
+  -e DINGO_ACCOUNT=$(git config --global --get user.email) \
   -e DINGO_CLUSTER=demo-cluster-replaceme \
   dingotiles/dingo-postgresql
 94d1830c64b0237e0c91d8009be54b2b4c91c81f3a2bb47599d4d1447eec4a45
