@@ -50,23 +50,6 @@ class AgentController < ApplicationController
     end
   end
 
-    # {
-    #   cluster: {
-    #     name: "",
-    #     scope: ""
-    #   },
-    #   archives: {
-    #     method: "s3",
-    #     s3: {
-    #       aws_access_key_id: "AKIAI5G7VDERAULCIVRQ",
-    #       aws_secret_access_id: "9LuHhRBByimLaB8oBgXkNQH+R3sX1I392Pzk1gyn",
-    #       s3_bucket: "pws-dingo-api-prod",
-    #       s3_endpoint: "https+path://s3.amazonaws.com:443"
-    #     },
-    #     local: {},
-    #     ssh: {}
-    #   },
-
     private
     def required_env(key)
       @missing_env_vars ||= []

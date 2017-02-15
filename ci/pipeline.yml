@@ -31,14 +31,14 @@ resources:
 - name: api
   type: git
   source:
-    uri: git@github.com:dingotiles/dingo-api.git
+    uri: git@github.com:dingotiles/dingo-standalone-hub.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
 
 - name: api-ci
   type: git
   source:
-    uri: git@github.com:dingotiles/dingo-api.git
+    uri: git@github.com:dingotiles/dingo-standalone-hub.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
 
