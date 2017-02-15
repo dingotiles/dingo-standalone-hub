@@ -1,0 +1,8 @@
+applications:
+- name: dingo-api
+  memory: 256M
+  buildpack: ruby_buildpack
+  stack: cflinuxfs2
+  routes:
+  - route: api.dingotiles.com
+  - route: standalone.dingotiles.com
