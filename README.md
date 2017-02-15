@@ -1,24 +1,21 @@
-# README
+# Central Hub for Dingo PostgreSQL for Docker
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+**PRIVATE: This is our PostgreSQL Backups & HA orchestration as a Service product. See dingo-postgresql-agent for the OSS client, which includes a `test-api` for testing the agent. This repo shares some structs with agent code.**
 
-Things you may want to cover:
+All Dingo PostgreSQL agent nodes connect first to this API to request credentials & configuration.
 
-* Ruby version
+Users can manage all their clusters via a web UI.
 
-* System dependencies
+## Development
 
-* Configuration
+This Rails web app can be deployed in a small Docker cluster with a test dingo-postgresql-agent container:
 
-* Database creation
+```
+docker-compose up --build
+```
 
-* Database initialization
+**NOTE: `dingotiles/dingo-standalone-hub` image is not a public image and should only be created for purposes of dev/testing.**
 
-* How to run the test suite
+### Deploying to Cloud Foundry
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+See `ci/pipeline.yml` for required environment variables.
