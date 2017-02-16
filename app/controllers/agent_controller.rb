@@ -30,16 +30,19 @@ class AgentController < ApplicationController
     }
     if ENV['AWS_ACCESS_KEY_ID']
       agent_spec[:archives][:method] = "s3"
-      agent_spec[:archives][:aws_access_key_id] = required_env("AWS_ACCESS_KEY_ID")
-			agent_spec[:archives][:aws_secret_access_id] = required_env("AWS_SECRET_ACCESS_KEY")
-			agent_spec[:archives][:s3_bucket] = required_env("WAL_S3_BUCKET")
-			agent_spec[:archives][:s3_endpoint] = required_env("WALE_S3_ENDPOINT")
+      agent_spec[:archives][:s3] = {}
+      agent_spec[:archives][:s3][:aws_access_key_id] = required_env("AWS_ACCESS_KEY_ID")
+			agent_spec[:archives][:s3][:aws_secret_access_id] = required_env("AWS_SECRET_ACCESS_KEY")
+			agent_spec[:archives][:s3][:s3_bucket] = required_env("WAL_S3_BUCKET")
+			agent_spec[:archives][:s3][:s3_endpoint] = required_env("WALE_S3_ENDPOINT")
     elsif ENV['SSH_HOST']
-      agent_spec[:archives][:host] = required_env("SSH_HOST")
-      agent_spec[:archives][:port] = required_env("SSH_PORT")
-      agent_spec[:archives][:user] = required_env("SSH_USER")
-      agent_spec[:archives][:private_key] = required_env("SSH_PRIVATE_KEY")
-      agent_spec[:archives][:base_path] = required_env("SSH_BASE_PATH")
+      agent_spec[:archives][:method] = "ssh"
+      agent_spec[:archives][:ssh] = {}
+      agent_spec[:archives][:ssh][:host] = required_env("SSH_HOST")
+      agent_spec[:archives][:ssh][:port] = required_env("SSH_PORT")
+      agent_spec[:archives][:ssh][:user] = required_env("SSH_USER")
+      agent_spec[:archives][:ssh][:private_key] = required_env("SSH_PRIVATE_KEY")
+      agent_spec[:archives][:ssh][:base_path] = required_env("SSH_BASE_PATH")
     else
       @missing_env_vars = ["AWS_ACCESS_KEY_ID or SSH_HOST"]
     end
