@@ -1,3 +1,10 @@
-<pre>
-<%= @cluster.inspect %>
-</pre>
+
+<h2>Cluster <%= @cluster.name %></h2>
+<p>Owned by <%= @cluster.account.email %></p>
+
+<h3>Node creation events</h3>
+<ul>
+<% @cluster.cluster_node_events.each do |event| -%>
+  <li><%= event.name %>, created at <%= time_ago_in_words(event.created_at) %></li>
+<% end -%>
+</ul>
