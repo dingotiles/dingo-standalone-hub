@@ -1,5 +1,7 @@
-<% @clusters.each do |cluster| %>
+<% @clusters.in_groups_of(3) do |row| -%>
   <div class="row">
+    <% row.each do |cluster| -%>
+      <% if cluster -%>
     <div class="col-md-4">
       <div class="x_panel">
         <div class="x_title">
@@ -15,7 +17,7 @@
           <article class="media event">
             <div class="media-body">
               <a class="title" href="#"><%= event.name %></a>
-              <p>Created: <%= time_ago_in_words(event.created_at) %></p>
+              <p>Created: <%= time_ago_in_words(event.created_at) %> ago</p>
               <p>Image version: v<%= event.image_version %></p>
             </div>
           </article>
@@ -23,5 +25,7 @@
         </div>
       </div>
     </div>
+      <% end -%>
+    <% end -%>
   </div>
-<% end %>
+<% end -%>
