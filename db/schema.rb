@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20170217010734) do
     t.string   "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_accounts_on_email", using: :btree
   end
 
   create_table "cluster_nodes", force: :cascade do |t|
@@ -44,6 +45,7 @@ ActiveRecord::Schema.define(version: 20170217010734) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_users_on_account_id", using: :btree
+    t.index ["email"], name: "index_users_on_email", using: :btree
   end
 
   add_foreign_key "cluster_nodes", "clusters"
