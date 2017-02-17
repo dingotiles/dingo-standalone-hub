@@ -1,10 +1,6 @@
 class ClustersController < ApplicationController
   def index
-    if cluster = Cluster.last
-      redirect_to cluster_path(cluster)
-    else
-      redirect_to tutorial_path
-    end
+    @clusters = Cluster.all
   end
 
   def show
