@@ -1,4 +1,8 @@
 class ClustersController < ApplicationController
+  def self.limit_node_events
+    3
+  end
+
   def index
     @clusters = Cluster.order('updated_at DESC')
   end
