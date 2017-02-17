@@ -2,6 +2,8 @@
 groups:
 - name: deploy
   jobs: [deploy-prod]
+- name: ci-image
+  jobs: [build-task-image]
 
 jobs:
 - name: deploy-prod
@@ -9,13 +11,13 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: api, trigger: true}
-    - {get: api-ci}
+    - {get: app, trigger: true}
+    - {get: app-ci}
   - task: generate-assets
-    file: api-ci/ci/tasks/generate-assets.yml
+    file: app-ci/ci/tasks/generate-assets.yml
   - put: deploy-prod
     params:
-      manifest: api/manifest.yml
+      manifest: app/manifest.yml
       path: app_with_assets
       current_app_name: dingo-api
       environment_variables:
@@ -29,15 +31,24 @@ jobs:
         WALE_S3_ENDPOINT: {{cf_prod_env_wale_s3_endpoint}}
         WAL_S3_BUCKET: {{cf_prod_env_wal_s3_bucket}}
 
+- name: build-task-image
+  public: true
+  serial: true
+  plan:
+  - {get: app-ci}
+  - put: docker-image-ci
+    params:
+      build: app-ci/ci/ci_image
+
 resources:
-- name: api
+- name: app
   type: git
   source:
     uri: git@github.com:dingotiles/dingo-standalone-hub.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
 
-- name: api-ci
+- name: app-ci
   type: git
   source:
     uri: git@github.com:dingotiles/dingo-standalone-hub.git
@@ -53,3 +64,11 @@ resources:
     organization: {{cf_prod_org}}
     space: {{cf_prod_space}}
     skip_cert_check: false
+
+- name: docker-image-ci
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-standalone-hub-pipeline

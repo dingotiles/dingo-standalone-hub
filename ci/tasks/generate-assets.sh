@@ -1,5 +1,7 @@
 #!/bin/bash
 
-git clone api app_with_assets
+git clone app app_with_assets
 cd app_with_assets
+
+bundle install
 rake assets:precompile

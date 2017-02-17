@@ -2,14 +2,14 @@
 platform: linux
 image_resource:
   type: docker-image
-  source: {repository: dingotiles/dingo-postgresql-agent-pipeline}
+  source: {repository: dingotiles/dingo-standalone-hub-pipeline}
 
 inputs:
-- name: api-ci
-- name: api
+- name: app-ci
+- name: app
 
 outputs:
 - name: app_with_assets
 
 run:
-  path: ./api-ci/ci/tasks/generate-assets.sh
+  path: ./app-ci/ci/tasks/generate-assets.sh
