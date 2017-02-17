@@ -1,6 +1,6 @@
 class ClustersController < ApplicationController
   def index
-    @clusters = Cluster.all
+    @clusters = Cluster.order('updated_at DESC')
   end
 
   def show
