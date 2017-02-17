@@ -2,8 +2,13 @@ class AgentController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def register_cluster_node
+    account_email = params[:account]
+    account = Account.find_or_create_by(email: account_email)
     node_name = params[:node]
     cluster_name = params[:cluster]
+    cluster = Cluster.find_or_create_by(name: cluster_name, account: account)
+    cluster.cluster_nodes.find_or_create_by(name: node_name)
+
     image_version = params[:image_version]
     agent_spec = {
       cluster: {
