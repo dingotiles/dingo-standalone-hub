@@ -14,7 +14,7 @@ class DocsControllerTest < ActionDispatch::IntegrationTest
   test "should POST new cluster node" do
     assert_difference "Account.count", +1 do
       assert_difference "Cluster.count", +1 do
-        assert_difference "ClusterNode.count", +1 do
+        assert_difference "ClusterNodeEvent.count", +1 do
           post "/agent/api", params: {"cluster": "c1", "node": "n1", "account": "newacct@example.com"}
         end
       end
@@ -29,7 +29,7 @@ class DocsControllerTest < ActionDispatch::IntegrationTest
     Account.create(email: "known-account@example.com")
     assert_difference "Account.count", 0 do
       assert_difference "Cluster.count", +1 do
-        assert_difference "ClusterNode.count", +1 do
+        assert_difference "ClusterNodeEvent.count", +1 do
           post "/agent/api", params: {"cluster": "c1", "node": "n1", "account": "known-account@example.com"}
         end
       end

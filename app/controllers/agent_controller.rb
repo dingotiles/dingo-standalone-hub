@@ -7,7 +7,7 @@ class AgentController < ApplicationController
     node_name = params[:node]
     cluster_name = params[:cluster]
     cluster = Cluster.find_or_create_by(name: cluster_name, account: account)
-    cluster.cluster_nodes.find_or_create_by(name: node_name)
+    cluster.cluster_node_events.create(name: node_name)
 
     image_version = params[:image_version]
     agent_spec = {

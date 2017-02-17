@@ -22,12 +22,12 @@ ActiveRecord::Schema.define(version: 20170217010734) do
     t.index ["email"], name: "index_accounts_on_email", using: :btree
   end
 
-  create_table "cluster_nodes", force: :cascade do |t|
+  create_table "cluster_node_events", force: :cascade do |t|
     t.integer  "cluster_id"
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["cluster_id"], name: "index_cluster_nodes_on_cluster_id", using: :btree
+    t.index ["cluster_id"], name: "index_cluster_node_events_on_cluster_id", using: :btree
   end
 
   create_table "clusters", force: :cascade do |t|
@@ -48,7 +48,7 @@ ActiveRecord::Schema.define(version: 20170217010734) do
     t.index ["email"], name: "index_users_on_email", using: :btree
   end
 
-  add_foreign_key "cluster_nodes", "clusters"
+  add_foreign_key "cluster_node_events", "clusters"
   add_foreign_key "clusters", "accounts"
   add_foreign_key "users", "accounts"
 end
