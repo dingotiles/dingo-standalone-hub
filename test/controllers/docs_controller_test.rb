@@ -15,7 +15,7 @@ class DocsControllerTest < ActionDispatch::IntegrationTest
     assert_difference "Account.count", +1 do
       assert_difference "Cluster.count", +1 do
         assert_difference "ClusterNodeEvent.count", +1 do
-          post "/agent/api", params: {"cluster": "c1", "node": "n1", "account": "newacct@example.com"}
+          post "/agent/api", params: {"cluster": "c1", "node": "n1", "account": "newacct@example.com", "image_version": "0.0.8"}
         end
       end
     end
@@ -30,7 +30,7 @@ class DocsControllerTest < ActionDispatch::IntegrationTest
     assert_difference "Account.count", 0 do
       assert_difference "Cluster.count", +1 do
         assert_difference "ClusterNodeEvent.count", +1 do
-          post "/agent/api", params: {"cluster": "c1", "node": "n1", "account": "known-account@example.com"}
+          post "/agent/api", params: {"cluster": "c1", "node": "n1", "account": "known-account@example.com", "image_version": "0.0.8"}
         end
       end
     end

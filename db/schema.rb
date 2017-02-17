@@ -25,8 +25,9 @@ ActiveRecord::Schema.define(version: 20170217010734) do
   create_table "cluster_node_events", force: :cascade do |t|
     t.integer  "cluster_id"
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "image_version"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
     t.index ["cluster_id"], name: "index_cluster_node_events_on_cluster_id", using: :btree
   end
 
