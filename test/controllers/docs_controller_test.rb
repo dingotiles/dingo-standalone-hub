@@ -11,4 +11,11 @@ class DocsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should POST new cluster node" do
+    post "/agent/api", params: {"cluster": "c1", "node": "n1"}
+    assert_response :success
+    resp = JSON.parse(response.body)
+    assert resp["cluster"]["name"], "n1"
+    assert resp["cluster"]["scope"], "c1"
+  end
 end
