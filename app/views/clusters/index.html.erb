@@ -15,7 +15,8 @@
           <article class="media event">
             <div class="media-body">
               <a class="title" href="#"><%= event.name %></a>
-              <p><%= time_ago_in_words(event.created_at) %></p>
+              <p>Created: <%= time_ago_in_words(event.created_at) %></p>
+              <p>Image version: v<%= event.image_version %></p>
             </div>
           </article>
           <% end -%>
