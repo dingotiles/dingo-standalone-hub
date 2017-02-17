@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get '/dashboard', to: 'dashboard#index'
+
+  resources :clusters, only: [:index, :show]
+
   root to: 'docs#index'
   get '/tutorial', to: 'docs#tutorial'
 
