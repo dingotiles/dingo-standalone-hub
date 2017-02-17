@@ -35,10 +35,12 @@ jobs:
   public: true
   serial: true
   plan:
-  - {get: app-ci}
+  - get: app-ci
+  - task: copy-gemfile
+    file: app-ci/ci/tasks/copy-gemfile.yml
   - put: docker-image-ci
     params:
-      build: app-ci/ci/ci_image
+      build: dockerfile
 
 resources:
 - name: app
