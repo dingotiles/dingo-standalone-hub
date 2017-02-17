@@ -5,3 +5,4 @@ cd app_with_assets
 
 bundle install
 rake assets:precompile
+bundle package
