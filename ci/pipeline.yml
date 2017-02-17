@@ -35,7 +35,8 @@ jobs:
   public: true
   serial: true
   plan:
-  - get: app-ci
+  - {get: app-ci}
+  - {get: app-gemfile, trigger: true}
   - task: copy-gemfile
     file: app-ci/ci/tasks/copy-gemfile.yml
   - put: docker-image-ci
@@ -56,6 +57,14 @@ resources:
     uri: git@github.com:dingotiles/dingo-standalone-hub.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
+
+- name: app-gemfile
+  type: git
+  source:
+    uri: git@github.com:dingotiles/dingo-standalone-hub.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-private-key}}
+    paths: [Gemfile*]
 
 - name: deploy-prod
   type: cf
