@@ -11,10 +11,12 @@ jobs:
   - aggregate:
     - {get: api, trigger: true}
     - {get: api-ci}
+  - task: generate-assets
+    file: api-ci/ci/tasks/generate-assets.yml
   - put: deploy-prod
     params:
       manifest: api/manifest.yml
-      path: api
+      path: app_with_assets
       current_app_name: dingo-api
       environment_variables:
         AWS_ACCESS_KEY_ID: {{cf_prod_env_aws_access_key_id}}
