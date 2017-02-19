@@ -77,4 +77,11 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Since PWS uses port 4443 (rather than 443) for websocket connections
+  if ENV['VCAP_APPLICATION'].present?
+    host = JSON.parse(ENV['VCAP_APPLICATION']).fetch('uris')[0]
+    config.action_cable.url = "wss://#{host}:4443/cable"
+    config.action_cable.allowed_request_origins = ["http://#{host}", "https://#{host}"]
+  end
 end
