@@ -4,10 +4,10 @@ class ClustersController < ApplicationController
   end
 
   def index
-    @clusters = Cluster.order('updated_at DESC')
+    @clusters = Cluster.dashboard
   end
 
   def show
-    @cluster = Cluster.find(params[:id])
+    @cluster = Cluster.dashboard.find(params[:id])
   end
 end
