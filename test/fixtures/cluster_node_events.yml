@@ -1,5 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-f1n1:
-  cluster: fixture1
+c1n1:
+  cluster: cluster1
   name: n1
+
+c1n2:
+  cluster: cluster1
+  name: n2
