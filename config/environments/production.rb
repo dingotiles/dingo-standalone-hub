@@ -81,7 +81,6 @@ Rails.application.configure do
     application_uris = JSON.parse(ENV['VCAP_APPLICATION'])["application_uris"]
     if host = application_uris.find {|uri| uri =~ /cfapps.io/}
       config.action_cable.url = "wss://#{host}:4443/cable"
-      config.action_cable.allowed_request_origins = ["http://#{host}", "https://#{host}"]
     else
       Rails.logger.error "Must deploy with a cfapps.io domain that supports :4443"
     end
