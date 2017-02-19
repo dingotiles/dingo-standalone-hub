@@ -3,6 +3,8 @@ Rails.application.routes.draw do
 
   resources :clusters, only: [:index, :show]
 
+  post '/watcher/clusters/:cluster_id/nodes/:node_id', to: 'watcher#update'
+
   root to: 'docs#index'
   get '/tutorial', to: 'docs#tutorial'
 

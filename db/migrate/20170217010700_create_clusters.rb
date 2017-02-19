@@ -4,6 +4,7 @@ class CreateClusters < ActiveRecord::Migration[5.0]
       t.references :account, foreign_key: true
       t.string :name
       t.string :archive_method
+      t.string :state, default: "starting"
 
       t.timestamps
     end

@@ -3,7 +3,3 @@
 c1n1:
   cluster: cluster1
   name: n1
-
-c1n2:
-  cluster: cluster1
-  name: n2

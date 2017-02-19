@@ -9,6 +9,5 @@ class ClusterChannel < ApplicationCable::Channel
 
   def provision
     Rails.logger.info "Inbound #provision request"
-    ActionCable.server.broadcast 'cluster_channel', cluster: "Hi there"
   end
 end

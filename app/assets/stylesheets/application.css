@@ -28,6 +28,7 @@
 }
 
 .dead {
+  color: white;
   background: repeating-linear-gradient(
     45deg,
     rgba(0, 0, 0, 0.2),
@@ -35,4 +36,12 @@
     rgba(0, 0, 0, 0.3) 10px,
     rgba(0, 0, 0, 0.3) 20px
   );
+}
+
+.dead small {
+  color: #ddd;
+}
+
+.dead a {
+  color: #ddd;
 }

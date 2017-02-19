@@ -33,8 +33,14 @@ gem 'gentelella-rails'
 gem 'jquery-rails'
 gem 'coffee-rails'
 
+gem 'etcd'
+
 group :production do
   gem 'lograge'
+end
+
+group :test do
+  gem 'rails-controller-testing'
 end
 
 group :development, :test do
