@@ -78,11 +78,18 @@ Rails.application.configure do
   # pass port 4443
   # https://support.cloudflare.com/hc/en-us/articles/200169156-Which-ports-will-Cloudflare-work-with-
   if ENV['VCAP_APPLICATION'].present?
-    if host = JSON.parse(ENV['VCAP_APPLICATION'])["application_uris"].find {|uri| uri =~ /cfapps.io/}
+    application_uris = JSON.parse(ENV['VCAP_APPLICATION'])["application_uris"]
+    if host = application_uris.find {|uri| uri =~ /cfapps.io/}
       config.action_cable.url = "wss://#{host}:4443/cable"
       config.action_cable.allowed_request_origins = ["http://#{host}", "https://#{host}"]
     else
       Rails.logger.error "Must deploy with a cfapps.io domain that supports :4443"
     end
+    origins = application_uris.inject([]) do |uris, host|
+      uris << "https://#{host}"
+      uris << "http://#{host}"
+      uris
+    end
+    Rails.application.config.action_cable.allowed_request_origins = origins
   end
 end
