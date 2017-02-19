@@ -27,19 +27,6 @@
   color: #ddd;
 }
 
-.starting {
- background-color: rgb(255, 245, 0);
- color: white;
-}
-
-.starting small {
-  color: #ddd;
-}
-
-.starting a {
-  color: #ddd;
-}
-
 .dead {
   background: repeating-linear-gradient(
     45deg,
