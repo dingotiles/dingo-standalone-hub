@@ -7,7 +7,7 @@ App.cluster = App.cable.subscriptions.create "ClusterChannel",
 
   received: (data) ->
     # Called when there's incoming data on the websocket for this channel
-    console.log data
+    $('#clusters').html data['clusters']
 
   provision: ->
     # Received by Rails' ClusterChannel#provision method
