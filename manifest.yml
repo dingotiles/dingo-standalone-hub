@@ -5,6 +5,7 @@ applications:
   stack: cflinuxfs2
   command: "bundle exec rake cf:on_first_instance db:migrate && rails s -p $PORT"
   routes:
+  - route: dingo-hub.cfapps.io
   - route: api.dingotiles.com
   - route: standalone.dingotiles.com
   - route: hub.dingotiles.com
