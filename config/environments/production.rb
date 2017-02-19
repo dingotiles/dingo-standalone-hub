@@ -74,8 +74,11 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Since PWS uses port 4443 (rather than 443) for websocket connections
+  # Need to use a *.cfapps.io domain since custom domains via CloudFlare won't
+  # pass port 4443
+  # https://support.cloudflare.com/hc/en-us/articles/200169156-Which-ports-will-Cloudflare-work-with-
   if ENV['VCAP_APPLICATION'].present?
-    host = JSON.parse(ENV['VCAP_APPLICATION']).fetch('uris')[0]
+    host = JSON.parse(ENV['VCAP_APPLICATION']).find {|uri| uri =~ /cfapps.io/}
     config.action_cable.url = "wss://#{host}:4443/cable"
     config.action_cable.allowed_request_origins = ["http://#{host}", "https://#{host}"]
   end
