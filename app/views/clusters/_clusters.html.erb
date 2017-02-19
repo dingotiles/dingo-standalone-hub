@@ -1,0 +1,7 @@
+<% clusters.in_groups_of(3) do |row| -%>
+  <div class="row">
+    <% row.each do |cluster| -%>
+      <%= render cluster if cluster %>
+    <% end -%>
+  </div>
+<% end -%>
