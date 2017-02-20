@@ -2,28 +2,7 @@ require 'test_helper'
 
 # TODO: tests using global env vars, and assume S3 is configured with them
 class AgentControllerTest < ActionDispatch::IntegrationTest
-  include ArchiveOptionsHelper
-  include EtcdOptionsHelper
-
-  def with_global_archive_s3(&block)
-    options = global_archive_s3_options.merge(global_etcd_options)
-    ClimateControl.modify(options, &block)
-  end
-
-  def with_global_archive_ssh(&block)
-    options = global_archive_ssh_options.merge(global_etcd_options)
-    ClimateControl.modify(options, &block)
-  end
-
-  def with_global_etcd(&block)
-    options = global_etcd_options.merge(global_archive_s3_options)
-    ClimateControl.modify(options, &block)
-  end
-
-  def with_global(&block)
-    options = global_etcd_options.merge(global_archive_s3_options)
-    ClimateControl.modify(options, &block)
-  end
+  include ClimateOptionsHelper
 
   test "POST assigns s3 archive" do
     with_global_archive_s3 do
@@ -102,7 +81,6 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should POST new cluster node to existing account" do
-    Account.create(email: "known-account@example.com")
     assert_difference "Account.count", 0 do
       assert_difference "Cluster.count", +1 do
         assert_difference "ClusterNode.count", +1 do
@@ -110,7 +88,7 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
             post "/agent/api", params: {
               "cluster": "new1",
               "node": "n1",
-              "account": "known-account@example.com",
+              "account": accounts(:known).email,
               "image_version": "0.0.8",
             }
           end

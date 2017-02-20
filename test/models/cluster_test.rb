@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class ClusterTest < ActiveSupport::TestCase
+  include ClimateOptionsHelper
+
   test "deletes dependents" do
     assert_difference "Cluster.count", -1 do
       assert_difference "ClusterNode.count", -1 do
@@ -11,7 +13,9 @@ class ClusterTest < ActiveSupport::TestCase
 
   test "on create allocates etcd credentials" do
     assert_difference "ClusterEtcd.count", +1 do
-      @cluster = accounts(:known).clusters.create
+      with_global do
+        @cluster = accounts(:known).clusters.create
+      end
     end
     etcd = @cluster.cluster_etcd
     assert etcd.credentials["uri"]
