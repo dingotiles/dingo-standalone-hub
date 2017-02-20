@@ -2,12 +2,24 @@ require 'test_helper'
 
 # TODO: tests using global env vars, and assume S3 is configured with them
 class AgentControllerTest < ActionDispatch::IntegrationTest
-  def global_s3_options
+  def global_archive_s3_options
     {
       "AWS_ACCESS_KEY_ID": "key",
       "AWS_SECRET_ACCESS_KEY": "secret",
       "WAL_S3_BUCKET": "bucket",
       "WALE_S3_ENDPOINT": "endpoint",
+      "SSH_HOST": nil,
+    }
+  end
+
+  def global_archive_ssh_options
+    {
+      "AWS_ACCESS_KEY_ID": nil,
+      "SSH_HOST": "localhost",
+      "SSH_PORT": "22",
+      "SSH_USER": "dingo",
+      "SSH_PRIVATE_KEY": "inline-key",
+      "SSH_BASE_PATH": "/data/",
     }
   end
 
@@ -18,17 +30,22 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
   end
 
   def with_global_archive_s3(&block)
-    options = global_s3_options.merge(global_etcd_options)
+    options = global_archive_s3_options.merge(global_etcd_options)
+    ClimateControl.modify(options, &block)
+  end
+
+  def with_global_archive_ssh(&block)
+    options = global_archive_ssh_options.merge(global_etcd_options)
     ClimateControl.modify(options, &block)
   end
 
   def with_global_etcd(&block)
-    options = global_etcd_options.merge(global_s3_options)
+    options = global_etcd_options.merge(global_archive_s3_options)
     ClimateControl.modify(options, &block)
   end
 
   def with_global(&block)
-    options = global_etcd_options.merge(global_s3_options)
+    options = global_etcd_options.merge(global_archive_s3_options)
     ClimateControl.modify(options, &block)
   end
 
@@ -44,10 +61,32 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
       resp = JSON.parse(response.body)
       assert "s3", resp["archives"]["method"]
       s3 = resp["archives"]["s3"]
+      assert s3
       assert_equal "key", s3["aws_access_key_id"]
       assert_equal "secret", s3["aws_secret_access_id"]
       assert_equal "bucket", s3["s3_bucket"]
       assert_equal "endpoint", s3["s3_endpoint"]
+    end
+  end
+
+  test "POST assigns ssh archive" do
+    with_global_archive_ssh do
+      post "/agent/api", params: {
+        "cluster": "new1",
+        "node": "n1",
+        "account": "newacct@example.com",
+        "image_version": "0.0.8",
+      }
+      assert_response :success
+      resp = JSON.parse(response.body)
+      assert_equal "ssh", resp["archives"]["method"]
+      ssh = resp["archives"]["ssh"]
+      assert ssh
+      assert_equal "localhost", ssh["host"]
+      assert_equal "22", ssh["port"]
+      assert_equal "dingo", ssh["user"]
+      assert_equal "inline-key", ssh["private_key"]
+      assert_equal "/data/", ssh["base_path"]
     end
   end
 

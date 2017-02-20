@@ -42,7 +42,7 @@ class AgentController < ApplicationController
     if account.archive.method == "s3"
       agent_spec[:archives][:method] = "s3"
       agent_spec[:archives][:s3] = account.archive.credentials
-    elsif ENV['SSH_HOST']
+    elsif account.archive.method == "ssh"
       agent_spec[:archives][:method] = "ssh"
       agent_spec[:archives][:ssh] = account.archive.credentials
     end
