@@ -7,5 +7,8 @@ class CreateArchives < ActiveRecord::Migration[5.0]
 
       t.timestamps
     end
+    Account.all.each do |acct|
+      acct.send(:provision_cluster_archive)
+    end
   end
 end
