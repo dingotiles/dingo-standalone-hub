@@ -2,9 +2,15 @@ class Account < ApplicationRecord
   has_many :clusters, dependent: :destroy
   has_one :archive, dependent: :destroy
 
+  before_create :allocate_guid
   after_create_commit :provision_cluster_archive
 
   private
+  def allocate_guid
+    self.guid = SecureRandom.hex(10)
+    self
+  end
+
   def provision_cluster_archive
     archive = self.build_archive
     creds = {}
@@ -36,11 +42,23 @@ class Account < ApplicationRecord
   end
 
   def broker_provision_s3_bucket_creds
+    # binding_credentials = {
+    #   "syslog_drain_url": nil,
+    #   "credentials": {
+    #     "access_key_id": "broker-key",
+    #     "secret_access_key": "broker-secret",
+    #     "bucket": "dingo-hub-s3-testing-test1",
+    #     "host": "s3-us-east-2.amazonaws.com",
+    #     "uri": "s3://broker-key:broker-secret@s3-us-east-2.amazonaws.com/dingo-hub-s3-testing-test1",
+    #     "username": "dingo-hub-s3-testing-user1",
+    #   }
+    # }
+    binding_credentials = S3BrokerClient.new.provision_and_return_credentials(guid, guid)
     {
-      "aws_access_key_id": "broker-key",
-      "aws_secret_access_id": "broker-secret",
-      "s3_bucket": "dingo-hub-s3-testing-test1",
-      "s3_endpoint": "https+path://s3-us-east-2.amazonaws.com:443",
+      "aws_access_key_id": binding_credentials["credentials"]["access_key_id"],
+      "aws_secret_access_id": binding_credentials["credentials"]["secret_access_key"],
+      "s3_bucket": binding_credentials["credentials"]["bucket"],
+      "s3_endpoint": "https+path://#{binding_credentials["credentials"]["host"]}:443",
     }
   end
 

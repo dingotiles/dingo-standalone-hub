@@ -26,9 +26,11 @@ module ClimateOptionsHelper
     {
       "AWS_ACCESS_KEY_ID": nil,
       "SSH_HOST": nil,
-      "S3_BROKER_URL": "http://localhost:8080",
+      "S3_BROKER_URL": "http://s3-broker.dev",
       "S3_BROKER_USERNAME": "broker",
       "S3_BROKER_PASSWORD": "password",
+      "S3_BROKER_SERVICE_ID": "amazon-s3",
+      "S3_BROKER_PLAN_ID": "bucket",
     }
   end
 
@@ -45,28 +47,25 @@ module ClimateOptionsHelper
   end
 
   def with_broker_archive_s3(&block)
-    # TODO: what to stub out
-    # expecting binding credentials to be:
-    # assert_equal "broker-key", s3["aws_access_key_id"]
-    # assert_equal "broker-secret", s3["aws_secret_access_id"]
-    # assert_equal "dingo-hub-s3-testing-test1", s3["s3_bucket"]
-    # assert_equal "https+path://s3-us-east-2.amazonaws.com:443", s3["s3_endpoint"]
-    #
-    # endpoint should look like: https+path://s3-us-east-2.amazonaws.com:443
-    # => "https+path://#{host}:443"
-    #
     # s3-cf-service-broker returns:
-    # {
-    #   "syslog_drain_url": null,
-    #   "credentials": {
-    #     "bucket": "dingo-hub-s3-testing-test1",
-    #     "access_key_id": "AKIAJKG5FVGTKR3ZOL6Q",
-    #     "secret_access_key": "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",
-    #     "host": "s3.amazonaws.com",
-    #     "uri": "s3://AKIAJKG5FVGTKR3ZOL6Q:i8et41UiJ9YfPsn%2FtA%2FQR5Ky41%2B8woGdjThd7LEs@s3.amazonaws.com/dingo-hub-s3-staging-test1",
-    #     "username": "dingo-hub-s3-staging-me1"
-    #   }
-    # }
+    binding_credentials = {
+      "syslog_drain_url": nil,
+      "credentials": {
+        "access_key_id": "broker-key",
+        "secret_access_key": "broker-secret",
+        "bucket": "dingo-hub-s3-testing-test1",
+        "host": "s3-us-east-2.amazonaws.com",
+        "uri": "s3://broker-key:broker-secret@s3-us-east-2.amazonaws.com/dingo-hub-s3-testing-test1",
+        "username": "dingo-hub-s3-testing-user1",
+      }
+    }
+    stub_request(:put, %r{^http://s3-broker.dev/service_instances/\w+$}).
+      with(headers: {"Content-Type" => "application/json"}).
+      to_return(body: {"dashboard_url" => nil}.to_json)
+    stub_request(:put, %r{^http://s3-broker.dev/service_instances/\w+/service_bindings/\w+$}).
+      with(headers: {"Content-Type" => "application/json"}).
+      to_return(body: binding_credentials.to_json)
+
     options = broker_archive_s3_options.merge(global_etcd_options)
     ClimateControl.modify(options, &block)
   end

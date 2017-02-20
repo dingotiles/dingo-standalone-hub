@@ -42,6 +42,7 @@ end
 group :test do
   gem 'rails-controller-testing'
   gem 'climate_control'
+  gem 'webmock'
 end
 
 group :development, :test do
