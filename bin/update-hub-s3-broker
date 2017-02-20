@@ -12,9 +12,15 @@ broker_password=$(echo $broker_app_json | jq -r ".resources[0].entity.environmen
 s3_broker_host=$(cf app s3-cf-service-broker | grep urls: | awk '{print $2}')
 s3_broker_url=https://${s3_broker_host}
 
+catalog=$(curl -s -u ${broker_username}:${broker_password} ${s3_broker_url}/v2/catalog)
+service_id=$(echo $catalog| jq -r ".services[0].id")
+plan_id=$(echo $catalog| jq -r ".services[0].plans[0].id")
+
 cf set-env dingo-api S3_BROKER_URL ${s3_broker_url}
 cf set-env dingo-api S3_BROKER_USERNAME ${broker_username}
 cf set-env dingo-api S3_BROKER_PASSWORD ${broker_password}
+cf set-env dingo-api S3_BROKER_SERVICE_ID ${service_id}
+cf set-env dingo-api S3_BROKER_PLAN_ID ${plan_id}
 
 echo When ready, restart dingo-api:
 echo cf restart dingo-api
