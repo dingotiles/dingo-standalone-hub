@@ -65,9 +65,10 @@ module ClimateOptionsHelper
     stub_request(:put, %r{^http://s3-broker.dev/v2/service_instances/\w+/service_bindings/\w+$}).
       with(headers: {"Content-Type" => "application/json"}).
       to_return(body: binding_credentials.to_json)
-
-    options = broker_archive_s3_options.merge(global_etcd_options)
-    ClimateControl.modify(options, &block)
+    Account.stub :wait_for_bucket, nil do
+      options = broker_archive_s3_options.merge(global_etcd_options)
+      ClimateControl.modify(options, &block)
+    end
   end
 
   def with_global_archive_ssh(&block)

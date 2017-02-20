@@ -3,6 +3,7 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'helpers/climate_options'
 
+require 'minitest/mock'
 require 'webmock/minitest'
 WebMock.disable_net_connect!(allow_localhost: true)
 

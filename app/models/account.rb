@@ -42,18 +42,9 @@ class Account < ApplicationRecord
   end
 
   def broker_provision_s3_bucket_creds
-    # binding_credentials = {
-    #   "syslog_drain_url": nil,
-    #   "credentials": {
-    #     "access_key_id": "broker-key",
-    #     "secret_access_key": "broker-secret",
-    #     "bucket": "dingo-hub-s3-testing-test1",
-    #     "host": "s3-us-east-2.amazonaws.com",
-    #     "uri": "s3://broker-key:broker-secret@s3-us-east-2.amazonaws.com/dingo-hub-s3-testing-test1",
-    #     "username": "dingo-hub-s3-testing-user1",
-    #   }
-    # }
     binding_credentials = S3BrokerClient.new.provision_and_return_credentials(guid, guid)
+    # have seen new credentials fail for new accounts; so wait a moment before providing them
+    self.class.wait_for_bucket
     {
       "aws_access_key_id": binding_credentials["credentials"]["access_key_id"],
       "aws_secret_access_id": binding_credentials["credentials"]["secret_access_key"],
@@ -79,5 +70,9 @@ class Account < ApplicationRecord
       "private_key": required_env("SSH_PRIVATE_KEY"),
       "base_path": required_env("SSH_BASE_PATH"),
     }
+  end
+
+  def self.wait_for_bucket
+    sleep 5
   end
 end
