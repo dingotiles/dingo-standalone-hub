@@ -23,7 +23,7 @@ class AgentController < ApplicationController
       },
       archives: {},
       etcd: {
-        uri: ENV['ETCD_URI'],
+        uri: @cluster.cluster_etcd.uri,
       },
       postgresql: {
         admin: {

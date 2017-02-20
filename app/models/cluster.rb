@@ -1,7 +1,9 @@
 class Cluster < ApplicationRecord
   belongs_to :account
+  has_one :cluster_etcd, dependent: :destroy
   has_many :cluster_nodes, dependent: :destroy
 
+  after_create_commit :provision_cluster_etcd
   after_commit on: [:update, :destroy] { ClusterBroadcastJob.perform_later self }
 
   def update_state_from_nodes!
@@ -22,4 +24,10 @@ class Cluster < ApplicationRecord
   def self.dashboard
     order('updated_at DESC')
   end
+
+  private
+  def provision_cluster_etcd
+    self.create_cluster_etcd!(credentials: {"uri": ENV['ETCD_URI']})
+  end
+
 end

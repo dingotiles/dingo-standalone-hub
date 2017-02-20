@@ -1,0 +1,5 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+common:
+  cluster: cluster1
+  credentials: {"uri": "http://localhost:4001"}

@@ -8,4 +8,13 @@ class ClusterTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test "on create allocates etcd credentials" do
+    assert_difference "ClusterEtcd.count", +1 do
+      @cluster = accounts(:known).clusters.create
+    end
+    etcd = @cluster.cluster_etcd
+    assert etcd.credentials["uri"]
+    assert etcd.uri
+  end
 end

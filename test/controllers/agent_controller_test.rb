@@ -18,6 +18,18 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
     assert resp["archives"]["s3"]["s3_endpoint"]
   end
 
+  test "POST assigns etcd" do
+    post "/agent/api", params: {
+      "cluster": "new1",
+      "node": "n1",
+      "account": "newacct@example.com",
+      "image_version": "0.0.8",
+    }
+    assert_response :success
+    resp = JSON.parse(response.body)
+    assert resp["etcd"]["uri"]
+  end
+
   test "should POST new cluster node" do
     assert_difference "Account.count", +1 do
       assert_difference "Cluster.count", +1 do
