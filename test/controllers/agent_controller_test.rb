@@ -1,6 +1,23 @@
 require 'test_helper'
 
+# TODO: tests using global env vars, and assume S3 is configured with them
 class AgentControllerTest < ActionDispatch::IntegrationTest
+  test "POST assigns s3 archive" do
+    post "/agent/api", params: {
+      "cluster": "new1",
+      "node": "n1",
+      "account": "newacct@example.com",
+      "image_version": "0.0.8",
+    }
+    assert_response :success
+    resp = JSON.parse(response.body)
+    assert "s3", resp["archives"]["method"]
+    assert resp["archives"]["s3"]["aws_access_key_id"]
+    assert resp["archives"]["s3"]["aws_secret_access_id"]
+    assert resp["archives"]["s3"]["s3_bucket"]
+    assert resp["archives"]["s3"]["s3_endpoint"]
+  end
+
   test "should POST new cluster node" do
     assert_difference "Account.count", +1 do
       assert_difference "Cluster.count", +1 do
@@ -41,14 +58,14 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should POST new cluster node to known cluster" do
-    Account.create(email: "known-account@example.com")
+    cluster = clusters(:cluster1)
     assert_difference "Account.count", 0 do
       assert_difference "Cluster.count", 0 do
         assert_difference "ClusterNode.count", +1 do
           post "/agent/api", params: {
-            "cluster": clusters(:cluster1).name,
+            "cluster": cluster.name,
             "node": "newnode1",
-            "account": "known-account@example.com",
+            "account": cluster.account.email,
             "image_version": "0.0.8",
           }
         end
@@ -61,14 +78,14 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should POST re-launch of known cluster node" do
-    Account.create(email: "known-account@example.com")
+    cluster = clusters(:cluster1)
     assert_difference "Account.count", 0 do
       assert_difference "Cluster.count", 0 do
         assert_difference "ClusterNode.count", 0 do
           post "/agent/api", params: {
-            "cluster": clusters(:cluster1).name,
+            "cluster": cluster.name,
             "node": cluster_nodes(:c1n1).name,
-            "account": "known-account@example.com",
+            "account": cluster.account.email,
             "image_version": "0.0.8",
           }
         end

@@ -1,0 +1,6 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+known:
+  account: known
+  method: s3
+  credentials: {"aws_access_key_id":"x","aws_secret_access_id":"x","s3_bucket":"x","s3_endpoint":"x"}

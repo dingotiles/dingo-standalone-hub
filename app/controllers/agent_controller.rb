@@ -4,8 +4,13 @@ class AgentController < ApplicationController
   def register_cluster_node
     cluster_name = params[:cluster]
     node_name = params[:node]
-    account = Account.find_or_create_by(email: params[:account])
-    @cluster = account.clusters.find_or_create_by(name: cluster_name)
+    begin
+      account = Account.find_or_create_by(email: params[:account])
+      @cluster = account.clusters.find_or_create_by(name: cluster_name)
+    rescue => e
+      render status: 500, json: {"missing-env": e.message}
+      return
+    end
     @cluster.cluster_nodes.find_or_create_by(name: node_name) do |node|
       node.image_version = params[:image_version]
     end
@@ -34,29 +39,14 @@ class AgentController < ApplicationController
         }
       }
     }
-    if ENV['AWS_ACCESS_KEY_ID']
+    if account.archive.method == "s3"
       agent_spec[:archives][:method] = "s3"
-      agent_spec[:archives][:s3] = {}
-      agent_spec[:archives][:s3][:aws_access_key_id] = required_env("AWS_ACCESS_KEY_ID")
-			agent_spec[:archives][:s3][:aws_secret_access_id] = required_env("AWS_SECRET_ACCESS_KEY")
-			agent_spec[:archives][:s3][:s3_bucket] = required_env("WAL_S3_BUCKET")
-			agent_spec[:archives][:s3][:s3_endpoint] = required_env("WALE_S3_ENDPOINT")
+      agent_spec[:archives][:s3] = account.archive.credentials
     elsif ENV['SSH_HOST']
       agent_spec[:archives][:method] = "ssh"
-      agent_spec[:archives][:ssh] = {}
-      agent_spec[:archives][:ssh][:host] = required_env("SSH_HOST")
-      agent_spec[:archives][:ssh][:port] = required_env("SSH_PORT")
-      agent_spec[:archives][:ssh][:user] = required_env("SSH_USER")
-      agent_spec[:archives][:ssh][:private_key] = required_env("SSH_PRIVATE_KEY")
-      agent_spec[:archives][:ssh][:base_path] = required_env("SSH_BASE_PATH")
-    else
-      @missing_env_vars = ["AWS_ACCESS_KEY_ID or SSH_HOST"]
+      agent_spec[:archives][:ssh] = account.archive.credentials
     end
-    unless @missing_env_vars.empty?
-      render status: 500, json: {"missing-env": @missing_env_vars}
-    else
-      render json: agent_spec
-    end
+    render json: agent_spec
   end
 
     private
