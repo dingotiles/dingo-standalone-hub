@@ -28,6 +28,7 @@ class S3BrokerClient
     req.body = data.to_json
 
     res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.read_timeout = 60 # seconds
       http.request(req)
     end
 
@@ -44,6 +45,7 @@ class S3BrokerClient
     req.body = data.to_json
 
     res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.read_timeout = 60 # seconds
       http.request(req)
     end
 
