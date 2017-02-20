@@ -4,7 +4,7 @@ require 'test_helper'
 class AgentControllerTest < ActionDispatch::IntegrationTest
   include ClimateOptionsHelper
 
-  test "POST assigns s3 archive" do
+  test "POST assigns global s3 archive" do
     with_global_archive_s3 do
       post "/agent/api", params: {
         "cluster": "new1",
@@ -24,7 +24,7 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "POST assigns ssh archive" do
+  test "POST assigns global ssh archive" do
     with_global_archive_ssh do
       post "/agent/api", params: {
         "cluster": "new1",
@@ -42,6 +42,26 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
       assert_equal "dingo", ssh["user"]
       assert_equal "inline-key", ssh["private_key"]
       assert_equal "/data/", ssh["base_path"]
+    end
+  end
+
+  test "POST provision broker s3 archive" do
+    with_broker_archive_s3 do
+      post "/agent/api", params: {
+        "cluster": "new1",
+        "node": "n1",
+        "account": "newacct@example.com",
+        "image_version": "0.0.8",
+      }
+      assert_response :success
+      resp = JSON.parse(response.body)
+      assert "s3", resp["archives"]["method"]
+      s3 = resp["archives"]["s3"]
+      assert s3
+      assert_equal "broker-key", s3["aws_access_key_id"]
+      assert_equal "broker-secret", s3["aws_secret_access_id"]
+      assert_equal "dingo-hub-s3-testing-test1", s3["s3_bucket"]
+      assert_equal "https+path://s3-us-east-2.amazonaws.com:443", s3["s3_endpoint"]
     end
   end
 
