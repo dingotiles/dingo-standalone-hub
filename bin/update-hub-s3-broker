@@ -5,6 +5,8 @@ set -e
 broker_name=s3-cf-service-broker
 
 space_guid=$(cat ~/.cf/config.json| jq -r .SpaceFields.GUID)
+space_name=$(cat ~/.cf/config.json| jq -r .SpaceFields.Name)
+
 broker_app_json=$(cf curl /v2/spaces/${space_guid}/apps\?q=name:${broker_name})
 broker_username=$(echo $broker_app_json | jq -r ".resources[0].entity.environment_json.SECURITY_USER_NAME")
 broker_password=$(echo $broker_app_json | jq -r ".resources[0].entity.environment_json.SECURITY_USER_PASSWORD")
@@ -16,11 +18,22 @@ catalog=$(curl -s -u ${broker_username}:${broker_password} ${s3_broker_url}/v2/c
 service_id=$(echo $catalog| jq -r ".services[0].id")
 plan_id=$(echo $catalog| jq -r ".services[0].plans[0].id")
 
-cf set-env dingo-api S3_BROKER_URL ${s3_broker_url}
-cf set-env dingo-api S3_BROKER_USERNAME ${broker_username}
-cf set-env dingo-api S3_BROKER_PASSWORD ${broker_password}
-cf set-env dingo-api S3_BROKER_SERVICE_ID ${service_id}
-cf set-env dingo-api S3_BROKER_PLAN_ID ${plan_id}
+if [[ "${space_name}" == "dingo-api-prod" ]]; then
+  echo "Copy the following into ci/credentials.yml and update pipeline:"
+  cat <<EOS
+cf_prod_s3_broker_url: "${s3_broker_url}"
+cf_prod_s3_broker_username: "${broker_username}"
+cf_prod_s3_broker_password: "${broker_password}"
+cf_prod_s3_broker_service_id: "${service_id}"
+cf_prod_s3_broker_plan_id: "${plan_id}"
+EOS
+else
+  cf set-env dingo-api S3_BROKER_URL ${s3_broker_url}
+  cf set-env dingo-api S3_BROKER_USERNAME ${broker_username}
+  cf set-env dingo-api S3_BROKER_PASSWORD ${broker_password}
+  cf set-env dingo-api S3_BROKER_SERVICE_ID ${service_id}
+  cf set-env dingo-api S3_BROKER_PLAN_ID ${plan_id}
 
-echo When ready, restart dingo-api:
-echo cf restart dingo-api
+  echo When ready, restart dingo-api:
+  echo cf restart dingo-api
+fi

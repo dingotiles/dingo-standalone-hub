@@ -21,15 +21,16 @@ jobs:
       path: app_with_assets
       current_app_name: dingo-api
       environment_variables:
-        AWS_ACCESS_KEY_ID: {{cf_prod_env_aws_access_key_id}}
-        AWS_SECRET_ACCESS_KEY: {{cf_prod_env_aws_secret_access_key}}
         ETCD_URI: {{cf_prod_env_etcd_uri}}
         ETCD_HOST_PORT: {{cf_prod_env_etcd_host_port}}
         ETCD_PROTOCOL: {{cf_prod_env_etcd_protocol}}
         ETCD_USERNAME: {{cf_prod_env_etcd_username}}
         ETCD_PASSWORD: {{cf_prod_env_etcd_password}}
-        WALE_S3_ENDPOINT: {{cf_prod_env_wale_s3_endpoint}}
-        WAL_S3_BUCKET: {{cf_prod_env_wal_s3_bucket}}
+        S3_BROKER_URL: {{cf_prod_s3_broker_url}}
+        S3_BROKER_USERNAME: {{cf_prod_s3_broker_username}}
+        S3_BROKER_PASSWORD: {{cf_prod_s3_broker_password}}
+        S3_BROKER_SERVICE_ID: {{cf_prod_s3_broker_service_id}}
+        S3_BROKER_PLAN_ID: {{cf_prod_s3_broker_plan_id}}
 
 - name: build-task-image
   public: true
