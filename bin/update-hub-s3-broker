@@ -10,7 +10,7 @@ broker_username=$(echo $broker_app_json | jq -r ".resources[0].entity.environmen
 broker_password=$(echo $broker_app_json | jq -r ".resources[0].entity.environment_json.SECURITY_USER_PASSWORD")
 
 s3_broker_host=$(cf app s3-cf-service-broker | grep urls: | awk '{print $2}')
-s3_broker_url=https://${s3_broker_host}
+s3_broker_url=http://${s3_broker_host}
 
 catalog=$(curl -s -u ${broker_username}:${broker_password} ${s3_broker_url}/v2/catalog)
 service_id=$(echo $catalog| jq -r ".services[0].id")
