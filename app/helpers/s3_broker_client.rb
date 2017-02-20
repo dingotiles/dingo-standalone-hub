@@ -21,7 +21,7 @@ class S3BrokerClient
     data = {"service_id": service_id, "plan_id": plan_id,
         "organization_guid": "org", "space_guid": "space"}
 
-    uri = URI("#{url}/service_instances/#{instance_id}")
+    uri = URI("#{url}/v2/service_instances/#{instance_id}")
     req = Net::HTTP::Put.new(uri.path)
     req.basic_auth username, password
     req.content_type = 'application/json'
@@ -32,13 +32,14 @@ class S3BrokerClient
       http.request(req)
     end
 
+    Rails.logger.info("PUT #{url}/v2/service_instances/#{instance_id}: " + res.body)
     res.is_a? Net::HTTPSuccess
   end
 
   def binding(instance_id, binding_id)
     data = {"service_id": service_id, "plan_id": plan_id, "app_guid": "app"}
 
-    uri = URI("#{url}/service_instances/#{instance_id}/service_bindings/#{binding_id}")
+    uri = URI("#{url}/v2/service_instances/#{instance_id}/service_bindings/#{binding_id}")
     req = Net::HTTP::Put.new(uri.path)
     req.basic_auth username, password
     req.content_type = 'application/json'
@@ -49,6 +50,7 @@ class S3BrokerClient
       http.request(req)
     end
 
+    Rails.logger.info("PUT #{url}/v2/service_instances/#{instance_id}/service_bindings/#{binding_id}: " + res.body)
     JSON.parse(res.body) if res.is_a? Net::HTTPSuccess
   end
 end

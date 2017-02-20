@@ -59,10 +59,10 @@ module ClimateOptionsHelper
         "username": "dingo-hub-s3-testing-user1",
       }
     }
-    stub_request(:put, %r{^http://s3-broker.dev/service_instances/\w+$}).
+    stub_request(:put, %r{^http://s3-broker.dev/v2/service_instances/\w+$}).
       with(headers: {"Content-Type" => "application/json"}).
       to_return(body: {"dashboard_url" => nil}.to_json)
-    stub_request(:put, %r{^http://s3-broker.dev/service_instances/\w+/service_bindings/\w+$}).
+    stub_request(:put, %r{^http://s3-broker.dev/v2/service_instances/\w+/service_bindings/\w+$}).
       with(headers: {"Content-Type" => "application/json"}).
       to_return(body: binding_credentials.to_json)
 
