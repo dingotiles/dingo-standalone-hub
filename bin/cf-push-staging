@@ -2,6 +2,6 @@
 
 cf t -o dingotiles -s dingo-api-staging
 rails assets:precompile && \
-  cf push -f manifest-staging.yml
+  cf zero-downtime-push dingo-api -f manifest-staging.yml
 
 rm -rf public/assets/
