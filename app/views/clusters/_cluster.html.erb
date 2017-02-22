@@ -9,7 +9,7 @@
       <div class="clearfix"></div>
     </div>
     <div class="x_content">
-      <% cluster.cluster_nodes.limit(ClustersController.limit_node_events).order("created_at DESC").each do |node| -%>
+      <% cluster.dashboard_nodes.each do |node| -%>
       <article class="media event">
         <div class="media-body">
           <a class="title" href="#"><%= node.name %></a>

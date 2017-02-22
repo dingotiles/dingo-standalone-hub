@@ -25,6 +25,10 @@ class Cluster < ApplicationRecord
     order('updated_at DESC')
   end
 
+  def dashboard_nodes
+    cluster_nodes.order("updated_at DESC").limit(ClustersController.limit_node_events)
+  end
+
   private
   def provision_cluster_etcd
     self.create_cluster_etcd!(credentials: {"uri": ENV['ETCD_URI']})
