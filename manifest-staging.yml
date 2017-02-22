@@ -6,6 +6,8 @@ applications:
   command: "bundle exec rake cf:on_first_instance db:migrate:status db:migrate && rails s -p $PORT"
   routes:
   - route: hub-staging.cfapps.io
+  - route: hub-staging.dingotiles.com
+  # - route: hub-ws-staging.dingotiles.com
   services:
   - hub-pg
   - hub-redis
