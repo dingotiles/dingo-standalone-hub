@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cf t -s dingo-api-staging
+cf t -o dingotiles -s dingo-api-staging
 rails assets:precompile && \
   cf push -f manifest-staging.yml
 
