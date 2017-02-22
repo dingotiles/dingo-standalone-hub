@@ -4,13 +4,13 @@ action=$1; shift
 
 if [[ $action == "start" ]]; then
   echo "Restarting all staging apps"
-  cf t -s dingo-api-staging
+  cf t -o dingotiles -s dingo-api-staging
   cf a | grep stop | awk '{print $1}' | xargs -L1 cf start
   echo
   cf t
 else
   echo "Stopping all staging apps"
-  cf t -s dingo-api-staging
+  cf t -o dingotiles -s dingo-api-staging
   cf a | grep started | awk '{print $1}' | xargs -L1 cf stop
   cf t -s dingo-api-prod
 fi
