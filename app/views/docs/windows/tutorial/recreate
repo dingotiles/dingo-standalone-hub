@@ -6,7 +6,8 @@ dingo-postgresql
 # docker run -d \
   --name dingo-postgresql \
   -e DOCKER_HOST_IP=${DOCKER_HOST_IP:?required} \
-  -e DOCKER_HOST_PORT_5432=${PUBLIC_PORT:-5000} -p ${PUBLIC_PORT:-5000}:5432 \
+  -e DOCKER_HOST_PORT_5432=${PUBLIC_PORT:-5000} \
+  -p ${PUBLIC_PORT:-5000}:5432 \
   -e DINGO_ACCOUNT=$(git config --global --get user.email) \
   -e DINGO_CLUSTER=demo-cluster-replaceme \
   dingotiles/dingo-postgresql
