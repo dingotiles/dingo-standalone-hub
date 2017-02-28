@@ -37,7 +37,7 @@ services:
       DOCKER_HOST_PORT_5432: 5432
       DOCKER_HOST_PORT_8008: 8008
       CELL_GUID: cell1
-    depends_on: [etcd,hub]
+    depends_on: [etcd,hub,etcd-broker]
     command: ["/scripts/entry.sh"]
   etcd:
     container_name: etcd
