@@ -2,7 +2,7 @@
 platform: linux
 image_resource:
   type: docker-image
-  source: {repository: dingotiles/dingo-standalone-hub-pipeline}
+  source: {repository: dingotiles/dingo-standalone-hub-base}
 
 inputs:
 - name: app-ci

@@ -8,12 +8,15 @@ services:
     ports: ["5000:5000"]
     command: ["/app/startup.sh"]
     environment:
-      ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
-      ETCD_HOST: ${DOCKER_HOST_IP}
-      ETCD_PORT: 4001
-      ETCD_PROTOCOL: http
-      ETCD_USERNAME: root
-      ETCD_PASSWORD: password
+      # ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
+      # ETCD_HOST: ${DOCKER_HOST_IP}
+      # ETCD_PORT: 4001
+      # ETCD_PROTOCOL: http
+      # ETCD_USERNAME: root
+      # ETCD_PASSWORD: password
+      ETCD_BROKER_URI: http://broker:password@${DOCKER_HOST_IP}:6000
+      ETCD_BROKER_SERVICE_ID: 5b0ad2fe-f7c0-11e6-8e76-7fc33eaeccd4
+      ETCD_BROKER_PLAN_ID: 5bcfa502-f7c0-11e6-bd06-e323138af97b
       AWS_ACCESS_KEY_ID: ~
       AWS_SECRET_ACCESS_KEY: ~
       WAL_S3_BUCKET: ~

@@ -2,8 +2,8 @@
 groups:
 - name: deploy
   jobs: [deploy-prod]
-- name: ci-image
-  jobs: [build-task-image]
+- name: images
+  jobs: [build-base-image]
 
 jobs:
 - name: deploy-prod
@@ -32,7 +32,7 @@ jobs:
         S3_BROKER_SERVICE_ID: {{cf_prod_s3_broker_service_id}}
         S3_BROKER_PLAN_ID: {{cf_prod_s3_broker_plan_id}}
 
-- name: build-task-image
+- name: build-base-image
   public: true
   serial: true
   plan:
@@ -40,7 +40,7 @@ jobs:
   - {get: app-gemfile, trigger: true}
   - task: copy-gemfile
     file: app-ci/ci/tasks/copy-gemfile.yml
-  - put: docker-image-ci
+  - put: docker-base-image
     params:
       build: dockerfile
 
@@ -77,10 +77,10 @@ resources:
     space: {{cf_prod_space}}
     skip_cert_check: false
 
-- name: docker-image-ci
+- name: docker-base-image
   type: docker-image
   source:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: dingotiles/dingo-standalone-hub-pipeline
+    repository: dingotiles/dingo-standalone-hub-base
