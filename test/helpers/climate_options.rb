@@ -37,7 +37,7 @@ module ClimateOptionsHelper
 
   def global_etcd_options
     {
-      "ETCD_URI": "http://localhost:4001",
+      "ETCD_URI": "http://global.shared.db:4001",
     }
   end
 

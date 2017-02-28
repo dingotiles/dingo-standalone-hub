@@ -18,7 +18,7 @@ class ClusterTest < ActiveSupport::TestCase
       end
     end
     etcd = @cluster.cluster_etcd
-    assert etcd.credentials["uri"]
-    assert etcd.uri
+    assert_equal "http://global.shared.db:4001", etcd.credentials["uri"]
+    assert_equal "http://global.shared.db:4001", etcd.uri
   end
 end

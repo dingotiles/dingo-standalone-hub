@@ -75,7 +75,7 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
       }
       assert_response :success
       resp = JSON.parse(response.body)
-      assert_equal "http://localhost:4001", resp["etcd"]["uri"]
+      assert_equal "http://global.shared.db:4001", resp["etcd"]["uri"]
     end
   end
 
