@@ -7,7 +7,7 @@ tests:
 - name: provision-read-write
   before_startup: [purge-backups]
   spec:
-  - {wait: one-node-running, timeout: 30}
+  - {wait: one-node-running, timeout: 60}
   - exec: [write-value]
   - assert: [retrieve-value]
 

@@ -90,6 +90,7 @@ services:
       ETCD_PROTOCOL: http
       ETCD_USERNAME: root
       ETCD_PASSWORD: password
+      ETCD_BROKER_URI: http://broker:password@${DOCKER_HOST_IP}:6000
       DINGO_CLUSTER: cluster1
       PATRONI_SCOPE: cluster1
       AWS_ACCESS_KEY_ID: ~
