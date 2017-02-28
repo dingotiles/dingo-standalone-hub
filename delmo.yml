@@ -1,5 +1,5 @@
 suite:
-  name: dingo-postgresql-agent
+  name: dingo-standalone-hub
   system: docker-compose.yml
   task_service: tests
 

@@ -1,4 +1,4 @@
-FROM dingotiles/dingo-standalone-hub-base
+FROM dingotiles/dingo-postgresql95-agent-base
 
 COPY ./tasks/  /tasks
 
