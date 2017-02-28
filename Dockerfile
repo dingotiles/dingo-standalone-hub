@@ -8,4 +8,4 @@ COPY . /app
 RUN cd /app && bundle install
 WORKDIR /app
 
-ENTRYPOINT ["bin/rails", "server"]
+CMD ["/app/startup.sh"]

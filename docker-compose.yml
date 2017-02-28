@@ -6,7 +6,7 @@ services:
     image: dingotiles/dingo-standalone-hub
     container_name: hub
     ports: ["5000:5000"]
-    command: []
+    command: ["/app/startup.sh"]
     environment:
       ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
       ETCD_HOST: ${DOCKER_HOST_IP}
@@ -20,7 +20,7 @@ services:
       WALE_S3_ENDPOINT: ~
       WALE_S3_PREFIX: ~
       DATABASE_URL: postgres://postgres:postgres@${DOCKER_HOST_IP}:5001/postgres
-    depends_on: [postgres,etcd]
+    depends_on: [postgres,etcd,etcd-broker]
   cluster1-node1:
     image: dingotiles/dingo-postgresql:pre-test
     container_name: cluster1-node1
@@ -49,6 +49,22 @@ services:
     - -initial-cluster-token=etcd-cluster-1
     - -initial-cluster=etcd0=http://${DOCKER_HOST_IP}:2380
     - -initial-cluster-state=new
+  etcd-broker:
+    container_name: etcd-broker
+    image: cfcommunity/etcd-cf-service-broker
+    ports: ["6000:6000"]
+    environment:
+      PORT: 6000
+      BROKER_USERNAME: broker
+      BROKER_PASSWORD: password
+      BROKER_PUBLIC_ETCD_URL: http://${DOCKER_HOST_IP}:4001
+      ETCD_HOST: http://${DOCKER_HOST_IP}:4001
+      ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
+      ETCD_USERNAME: root
+      ETCD_PASSWORD: password
+    command: [/scripts/start_broker.sh]
+    depends_on: [etcd]
+
   postgres:
     # https://hub.docker.com/_/postgres/
     image: postgres
