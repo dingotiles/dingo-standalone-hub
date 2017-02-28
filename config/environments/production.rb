@@ -80,11 +80,11 @@ Rails.application.configure do
   if ENV['VCAP_APPLICATION'].present?
     application_uris = JSON.parse(ENV['VCAP_APPLICATION'])["application_uris"]
     if host = application_uris.find {|uri| uri =~ /cfapps.io/}
-      config.action_cable.url = "wss://#{host}:4443/cable"
+      config.action_cable.url = "wss://#{host}:8443/cable"
     elsif host = application_uris.find {|uri| uri =~ /-ws/}
-      config.action_cable.url = "wss://#{host}:443/cable"
+      config.action_cable.url = "wss://#{host}:8443/cable"
     else
-      Rails.logger.error "Must deploy with a cfapps.io domain that supports :4443"
+      Rails.logger.error "Must deploy with a cfapps.io domain that supports :4443 or :8443"
     end
     origins = application_uris.inject([]) do |uris, host|
       uris << "https://#{host}"
