@@ -20,6 +20,7 @@ class ClusterTest < ActiveSupport::TestCase
     etcd = @cluster.cluster_etcd
     assert_equal "http://global.shared.db:4001", etcd.credentials["uri"]
     assert_equal "http://global.shared.db:4001", etcd.uri
+    assert_equal "/service/", @cluster.etcd_namespace
   end
 
   test "with broker etcd on create allocates unique credentials" do
@@ -33,5 +34,6 @@ class ClusterTest < ActiveSupport::TestCase
     assert_equal "http://etcd.cluster:4001", etcd.credentials["host"]
     assert_equal "/service_instances/qwerty", etcd.credentials["keypath"]
     assert_equal "http://user-abcdef:password@etcd.cluster:4001", etcd.uri
+    assert_equal "/service_instances/qwerty/service/", @cluster.etcd_namespace
   end
 end

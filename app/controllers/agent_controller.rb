@@ -20,6 +20,7 @@ class AgentController < ApplicationController
       cluster: {
         name: node_name,
         scope: cluster_name,
+        namespace: @cluster.etcd_namespace,
       },
       archives: {},
       etcd: {

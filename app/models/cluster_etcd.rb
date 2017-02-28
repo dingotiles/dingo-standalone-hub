@@ -4,4 +4,8 @@ class ClusterEtcd < ApplicationRecord
   def uri
     credentials["uri"]
   end
+
+  def keypath
+    credentials["keypath"]
+  end
 end

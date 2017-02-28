@@ -30,6 +30,14 @@ class Cluster < ApplicationRecord
     cluster_nodes.order("updated_at DESC").limit(ClustersController.limit_node_events)
   end
 
+  def etcd_namespace
+    if cluster_etcd.keypath
+      File.join(cluster_etcd.keypath, "/service/")
+    else
+      "/service/"
+    end
+  end
+
   private
   def allocate_guid
     self.guid = SecureRandom.hex(10)
