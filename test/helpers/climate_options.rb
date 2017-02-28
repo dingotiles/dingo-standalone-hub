@@ -38,6 +38,14 @@ module ClimateOptionsHelper
   def global_etcd_options
     {
       "ETCD_URI": "http://global.shared.db:4001",
+      "ETCD_BROKER_URI": nil,
+    }
+  end
+
+  def broker_etcd_options
+    {
+      "ETCD_URI": nil,
+      "ETCD_BROKER_URI": "http://broker:password@etcd.broker:6000",
     }
   end
 
@@ -78,6 +86,26 @@ module ClimateOptionsHelper
 
   def with_global_etcd(&block)
     options = global_etcd_options.merge(global_archive_s3_options)
+    ClimateControl.modify(options, &block)
+  end
+
+  def with_broker_etcd(&block)
+    binding_credentials = {
+      "credentials": {
+        "uri": "http://user-abcdef:password@etcd.cluster:4001",
+        "keypath": "/service_instances/qwerty",
+        "host": "http://etcd.cluster:4001",
+        "username": "user-abcdef",
+        "password": "password"
+      }
+    }
+    stub_request(:put, %r{^http://etcd.broker:6000/v2/service_instances/\w+$}).
+      with(headers: {"Content-Type" => "application/json"}).
+      to_return(body: {"dashboard_url" => nil}.to_json)
+    stub_request(:put, %r{^http://etcd.broker:6000/v2/service_instances/\w+/service_bindings/\w+$}).
+      with(headers: {"Content-Type" => "application/json"}).
+      to_return(body: binding_credentials.to_json)
+    options = broker_etcd_options.merge(global_archive_s3_options)
     ClimateControl.modify(options, &block)
   end
 

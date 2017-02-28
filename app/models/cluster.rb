@@ -3,6 +3,7 @@ class Cluster < ApplicationRecord
   has_one :cluster_etcd, dependent: :destroy
   has_many :cluster_nodes, dependent: :destroy
 
+  before_create :allocate_guid
   after_create_commit :provision_cluster_etcd
   after_commit on: [:update, :destroy] { ClusterBroadcastJob.perform_later self }
 
@@ -30,8 +31,32 @@ class Cluster < ApplicationRecord
   end
 
   private
-  def provision_cluster_etcd
-    self.create_cluster_etcd!(credentials: {"uri": ENV['ETCD_URI']})
+  def allocate_guid
+    self.guid = SecureRandom.hex(10)
+    self
   end
 
+  def provision_cluster_etcd
+    if ENV['ETCD_BROKER_URI']
+      creds = broker_provision_etcd_creds
+    elsif ENV['ETCD_URI']
+      creds = {"uri": ENV['ETCD_URI']}
+    else
+      raise "$ETCD_BROKER_URI or $ETCD_URI required to configure etcd access"
+    end
+    self.create_cluster_etcd!(credentials: creds)
+  end
+
+  def broker_provision_etcd_creds
+    binding = EtcdBrokerClient.new.provision_and_return_credentials(guid, guid)
+    binding_creds = binding["credentials"]
+    {
+      "uri": binding_creds["uri"],
+      "host": binding_creds["host"],
+      "port": binding_creds["port"],
+      "username": binding_creds["username"],
+      "password": binding_creds["password"],
+      "keypath": binding_creds["keypath"],
+    }
+  end
 end
