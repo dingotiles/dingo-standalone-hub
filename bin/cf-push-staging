@@ -1,7 +1,21 @@
 #!/bin/bash
 
 cf t -o dingotiles -s dingo-api-staging
+
+echo Fetching current env vars
+space_guid=$(cat ~/.cf/config.json | jq -r .SpaceFields.GUID)
+app=$(cf curl /v2/spaces/${space_guid}/apps\?q=name:dingo-api | jq -r ".resources[0]")
+manifest_env=$(echo $app | jq -r '. |= {"applications":[{"name":"dingo-api","env": .entity.environment_json}]}')
+
+echo Retaining env vars:
+echo $app | jq -r ".entity.environment_json | keys | join(\",\")"
+
+echo $manifest_env | ruby -ryaml -rjson -e "puts JSON.parse(ARGF.read).to_yaml" > /tmp/dingo-api-staging-env.yml
+spruce merge manifest-staging.yml /tmp/dingo-api-staging-env.yml > /tmp/dingo-api-staging-manifest.yml
+cat /tmp/dingo-api-staging-manifest.yml
+
+echo Deploying...
 rails assets:precompile && \
-  cf zero-downtime-push dingo-api -f manifest-staging.yml
+  cf zero-downtime-push dingo-api -f /tmp/dingo-api-staging-manifest.yml
 
 rm -rf public/assets/

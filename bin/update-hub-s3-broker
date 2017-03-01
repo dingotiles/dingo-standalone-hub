@@ -7,6 +7,7 @@ broker_name=s3-cf-service-broker
 space_guid=$(cat ~/.cf/config.json| jq -r .SpaceFields.GUID)
 space_name=$(cat ~/.cf/config.json| jq -r .SpaceFields.Name)
 
+echo Fetching broker credentials from ${broker_name}...
 broker_app_json=$(cf curl /v2/spaces/${space_guid}/apps\?q=name:${broker_name})
 broker_username=$(echo $broker_app_json | jq -r ".resources[0].entity.environment_json.SECURITY_USER_NAME")
 broker_password=$(echo $broker_app_json | jq -r ".resources[0].entity.environment_json.SECURITY_USER_PASSWORD")
@@ -28,6 +29,7 @@ cf_prod_s3_broker_service_id: "${service_id}"
 cf_prod_s3_broker_plan_id: "${plan_id}"
 EOS
 else
+  echo Updating dingo-api in ${space_name}...
   cf set-env dingo-api S3_BROKER_URL ${s3_broker_url}
   cf set-env dingo-api S3_BROKER_USERNAME ${broker_username}
   cf set-env dingo-api S3_BROKER_PASSWORD ${broker_password}
