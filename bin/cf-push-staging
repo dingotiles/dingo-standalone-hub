@@ -12,7 +12,6 @@ echo $app | jq -r ".entity.environment_json | keys | join(\",\")"
 
 echo $manifest_env | ruby -ryaml -rjson -e "puts JSON.parse(ARGF.read).to_yaml" > /tmp/dingo-api-staging-env.yml
 spruce merge manifest-staging.yml /tmp/dingo-api-staging-env.yml > /tmp/dingo-api-staging-manifest.yml
-cat /tmp/dingo-api-staging-manifest.yml
 
 echo Deploying...
 rails assets:precompile && \

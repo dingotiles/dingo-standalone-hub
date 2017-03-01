@@ -3,7 +3,7 @@ class Account < ApplicationRecord
   has_one :archive, dependent: :destroy
 
   before_create :allocate_guid
-  after_create_commit :provision_cluster_archive
+  after_create :provision_cluster_archive
 
   private
   def allocate_guid
@@ -12,6 +12,7 @@ class Account < ApplicationRecord
   end
 
   def provision_cluster_archive
+    Rails.logger.info "Account#provision_cluster_archive"
     archive = self.build_archive
     creds = {}
     @missing_env_vars = []

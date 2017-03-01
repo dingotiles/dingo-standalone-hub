@@ -32,7 +32,6 @@ class S3BrokerClient
       http.request(req)
     end
 
-    Rails.logger.info("PUT #{url}/v2/service_instances/#{instance_id}: " + res.body)
     res.is_a? Net::HTTPSuccess
   end
 
@@ -50,7 +49,6 @@ class S3BrokerClient
       http.request(req)
     end
 
-    Rails.logger.info("PUT #{url}/v2/service_instances/#{instance_id}/service_bindings/#{binding_id}: " + res.body)
     JSON.parse(res.body) if res.is_a? Net::HTTPSuccess
   end
 end

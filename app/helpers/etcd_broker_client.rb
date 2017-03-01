@@ -35,7 +35,6 @@ class EtcdBrokerClient
       http.request(req)
     end
 
-    Rails.logger.info("PUT #{url}/v2/service_instances/#{instance_id}: " + res.body)
     res.is_a? Net::HTTPSuccess
   end
 
@@ -53,7 +52,10 @@ class EtcdBrokerClient
       http.request(req)
     end
 
-    Rails.logger.info("PUT #{url}/v2/service_instances/#{instance_id}/service_bindings/#{binding_id}: " + res.body)
+    Rails.logger.info("etcd-broker PUT #{url}/v2/service_instances/#{instance_id}/service_bindings/#{binding_id}: " + res.body)
     JSON.parse(res.body) if res.is_a? Net::HTTPSuccess
+  rescue => e
+    Rails.logger.info("etcd-broker PUT #{url}/v2/service_instances/#{instance_id}/service_bindings/#{binding_id} errored: " + e.message)
+    nil
   end
 end

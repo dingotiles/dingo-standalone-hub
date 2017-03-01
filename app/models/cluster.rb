@@ -4,7 +4,7 @@ class Cluster < ApplicationRecord
   has_many :cluster_nodes, dependent: :destroy
 
   before_create :allocate_guid
-  after_create_commit :provision_cluster_etcd
+  after_create :provision_cluster_etcd
   after_commit on: [:update, :destroy] { ClusterBroadcastJob.perform_later self }
 
   def update_state_from_nodes!
@@ -45,6 +45,7 @@ class Cluster < ApplicationRecord
   end
 
   def provision_cluster_etcd
+    Rails.logger.info "Cluster#provision_cluster_etcd"
     if ENV['ETCD_BROKER_URI']
       creds = broker_provision_etcd_creds
     elsif ENV['ETCD_URI']
@@ -57,14 +58,18 @@ class Cluster < ApplicationRecord
 
   def broker_provision_etcd_creds
     binding = EtcdBrokerClient.new.provision_and_return_credentials(guid, guid)
-    binding_creds = binding["credentials"]
-    {
-      "uri": binding_creds["uri"],
-      "host": binding_creds["host"],
-      "port": binding_creds["port"],
-      "username": binding_creds["username"],
-      "password": binding_creds["password"],
-      "keypath": binding_creds["keypath"],
-    }
+    if binding
+      binding_creds = binding["credentials"]
+      {
+        "uri": binding_creds["uri"],
+        "host": binding_creds["host"],
+        "port": binding_creds["port"],
+        "username": binding_creds["username"],
+        "password": binding_creds["password"],
+        "keypath": binding_creds["keypath"],
+      }
+    else
+      {}
+    end
   end
 end

@@ -4,11 +4,16 @@ class AgentController < ApplicationController
   def register_cluster_node
     cluster_name = params[:cluster]
     node_name = params[:node]
+    unless cluster_name && node_name
+      render status: 400, json: {"error": "Missing required params 'cluster' and/or 'node'"}
+      return
+    end
     begin
       account = Account.find_or_create_by(email: params[:account])
       @cluster = account.clusters.find_or_create_by(name: cluster_name)
     rescue => e
-      render status: 500, json: {"missing-env": e.message}
+      Rails.logger.info e.backtrace
+      render status: 500, json: {"error": e.message}
       return
     end
     @cluster.cluster_nodes.find_or_create_by(name: node_name) do |node|
