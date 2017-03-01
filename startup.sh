@@ -1,3 +1,8 @@
 #!/bin/bash
 
-rails db:migrate && rails s -p 5000
+env
+rails db:migrate:status
+
+set -e
+rails db:migrate
+rails s -p 5000
