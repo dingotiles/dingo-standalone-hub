@@ -21,16 +21,14 @@ jobs:
       path: app_with_assets
       current_app_name: dingo-api
       environment_variables:
-        ETCD_URI: {{cf_prod_env_etcd_uri}}
-        ETCD_HOST_PORT: {{cf_prod_env_etcd_host_port}}
-        ETCD_PROTOCOL: {{cf_prod_env_etcd_protocol}}
-        ETCD_USERNAME: {{cf_prod_env_etcd_username}}
-        ETCD_PASSWORD: {{cf_prod_env_etcd_password}}
+        ETCD_BROKER_PLAN_ID: 5bcfa502-f7c0-11e6-bd06-e323138af97b
+        ETCD_BROKER_SERVICE_ID: 5b0ad2fe-f7c0-11e6-8e76-7fc33eaeccd4
+        ETCD_BROKER_URI: {{cf_prod_etcd_broker_uri}}
         S3_BROKER_URL: {{cf_prod_s3_broker_url}}
         S3_BROKER_USERNAME: {{cf_prod_s3_broker_username}}
         S3_BROKER_PASSWORD: {{cf_prod_s3_broker_password}}
-        S3_BROKER_SERVICE_ID: {{cf_prod_s3_broker_service_id}}
-        S3_BROKER_PLAN_ID: {{cf_prod_s3_broker_plan_id}}
+        S3_BROKER_SERVICE_ID: amazon-s3
+        S3_BROKER_PLAN_ID: bucket
 
 - name: build-base-image
   public: true
