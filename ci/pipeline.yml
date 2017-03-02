@@ -13,6 +13,18 @@ jobs:
   - aggregate:
     - {get: app}
     - {get: app-ci}
+  - task: assert-matching-env
+    file: app-ci/ci/tasks/assert-matching-env.yml
+    params:
+      prod_env_vars: ETCD_BROKER_PLAN_ID,ETCD_BROKER_SERVICE_ID,ETCD_BROKER_URI,S3_BROKER_PASSWORD,S3_BROKER_PLAN_ID,S3_BROKER_SERVICE_ID,S3_BROKER_URL,S3_BROKER_USERNAME
+      staging_cf_api: {{cf_staging_api}}
+      staging_cf_username: {{cf_staging_username}}
+      staging_cf_password: {{cf_staging_password}}
+      staging_cf_organization: {{cf_staging_org}}
+      staging_cf_space: {{cf_staging_space}}
+      staging_cf_skip_cert_check: false
+      staging_cf_appname: dingo-api
+
   - task: generate-assets
     file: app-ci/ci/tasks/generate-assets.yml
   - put: deploy-prod

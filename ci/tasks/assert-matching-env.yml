@@ -1,0 +1,21 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source: {repository: dingotiles/dingo-standalone-hub-base}
+
+inputs:
+- name: app-ci
+
+params:
+  prod_env_vars:
+  staging_cf_api:
+  staging_cf_username:
+  staging_cf_password:
+  staging_cf_organization:
+  staging_cf_space:
+  staging_cf_skip_cert_check:
+
+
+run:
+  path: ./app-ci/ci/tasks/assert-matching-env.sh
