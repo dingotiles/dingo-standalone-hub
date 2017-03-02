@@ -3,3 +3,11 @@
 c1n1:
   cluster: cluster1
   name: n1
+  state: running
+  image_version: 0.0.10
+
+cluster_dead_n1:
+  cluster: cluster_dead
+  name: cluster_dead_n1
+  state: missing
+  image_version: 0.0.5

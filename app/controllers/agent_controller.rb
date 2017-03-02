@@ -16,9 +16,12 @@ class AgentController < ApplicationController
       render status: 500, json: {"error": e.message}
       return
     end
-    @cluster.cluster_nodes.find_or_create_by(name: node_name) do |node|
+    node = @cluster.cluster_nodes.find_or_initialize_by(name: node_name) do |node|
       node.image_version = params[:image_version]
     end
+    node.state = "initialized"
+    node.save!
+    @cluster.update_state_from_nodes!
 
     image_version = params[:image_version]
     agent_spec = {

@@ -65,17 +65,35 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "POST assigns etcd" do
-    with_global_etcd do
-      post "/agent/api", params: {
-        "cluster": "new1",
-        "node": "n1",
-        "account": "newacct@example.com",
-        "image_version": "0.0.8",
-      }
-      assert_response :success
-      resp = JSON.parse(response.body)
-      assert_equal "http://global.shared.db:4001", resp["etcd"]["uri"]
+  test "POST assigns global etcd" do
+    assert_difference "ClusterEtcd.count", +1 do
+      with_global_etcd do
+        post "/agent/api", params: {
+          "cluster": "new1",
+          "node": "n1",
+          "account": "newacct@example.com",
+          "image_version": "0.0.8",
+        }
+        assert_response :success
+        resp = JSON.parse(response.body)
+        assert_equal "http://global.shared.db:4001", resp["etcd"]["uri"]
+      end
+    end
+  end
+
+  test "POST assigns brokered etcd" do
+    assert_difference "ClusterEtcd.count", +1 do
+      with_broker_etcd do
+        post "/agent/api", params: {
+          "cluster": "new1",
+          "node": "n1",
+          "account": "newacct@example.com",
+          "image_version": "0.0.8",
+        }
+        assert_response :success
+        resp = JSON.parse(response.body)
+        assert_equal "http://user-abcdef:password@etcd.cluster:4001", resp["etcd"]["uri"]
+      end
     end
   end
 
@@ -126,13 +144,15 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
     assert_difference "Account.count", 0 do
       assert_difference "Cluster.count", 0 do
         assert_difference "ClusterNode.count", +1 do
-          with_global do
-            post "/agent/api", params: {
-              "cluster": cluster.name,
-              "node": "newnode1",
-              "account": cluster.account.email,
-              "image_version": "0.0.8",
-            }
+          assert_difference "ClusterEtcd.count", 0 do
+            with_global do
+              post "/agent/api", params: {
+                "cluster": cluster.name,
+                "node": "newnode1",
+                "account": cluster.account.email,
+                "image_version": "0.0.8",
+              }
+            end
           end
         end
       end
@@ -143,25 +163,26 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
     assert resp["cluster"]["name"], "newnode1"
   end
 
-  test "should POST re-launch of known cluster node" do
-    cluster = clusters(:cluster1)
+  test "should POST re-launch of previous cluster node" do
     assert_difference "Account.count", 0 do
       assert_difference "Cluster.count", 0 do
         assert_difference "ClusterNode.count", 0 do
-          with_global do
-            post "/agent/api", params: {
-              "cluster": cluster.name,
-              "node": cluster_nodes(:c1n1).name,
-              "account": cluster.account.email,
-              "image_version": "0.0.8",
-            }
+          assert_difference "ClusterEtcd.count", 1 do
+            with_global do
+              post "/agent/api", params: {
+                "cluster": clusters(:cluster_dead).name,
+                "node": cluster_nodes(:cluster_dead_n1).name,
+                "account": clusters(:cluster_dead).account.email,
+                "image_version": "0.0.8",
+              }
+            end
           end
         end
       end
     end
     assert_response :success
     resp = JSON.parse(response.body)
-    assert resp["cluster"]["scope"], clusters(:cluster1).name
-    assert resp["cluster"]["name"], cluster_nodes(:c1n1).name
+    assert resp["cluster"]["scope"], clusters(:cluster_dead).name
+    assert resp["cluster"]["name"], cluster_nodes(:cluster_dead_n1).name
   end
 end

@@ -80,6 +80,6 @@ class Cluster < ApplicationRecord
   end
 
   def cleanup_etcd!
-    self.cluster_etcd.destroy
+    self.cluster_etcd.try(:destroy)
   end
 end
