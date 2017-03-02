@@ -4,9 +4,17 @@ class ClusterTest < ActiveSupport::TestCase
   include ClimateOptionsHelper
 
   test "deletes dependents" do
+    stub_request(:delete, "http://etcd.broker:6000/v2/service_instances/cluster1guid/service_bindings/cluster1guid").
+      with(headers: {"Content-Type" => "application/json"}).
+      to_return(status: 200)
+    stub_request(:delete, "http://etcd.broker:6000/v2/service_instances/cluster1guid").
+      with(headers: {"Content-Type" => "application/json"}).
+      to_return(status: 200)
     assert_difference "Cluster.count", -1 do
       assert_difference "ClusterNode.count", -1 do
-        clusters(:cluster1).destroy!
+        with_broker_etcd do
+          clusters(:cluster1).destroy!
+        end
       end
     end
   end

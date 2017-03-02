@@ -4,7 +4,7 @@ class Cluster < ApplicationRecord
   has_many :cluster_nodes, dependent: :destroy
 
   before_create :allocate_guid
-  after_create :provision_cluster_etcd
+  after_save :provision_cluster_etcd, on: [:create, :update]
   after_commit on: [:update, :destroy] { ClusterBroadcastJob.perform_later self }
   after_commit :cleanup_etcd!, on: [:update, :destroy], if: :dead?
 
@@ -50,6 +50,7 @@ class Cluster < ApplicationRecord
   end
 
   def provision_cluster_etcd
+    return if dead? || cluster_etcd
     Rails.logger.info "Cluster#provision_cluster_etcd"
     if ENV['ETCD_BROKER_URI']
       creds = broker_provision_etcd_creds
@@ -79,10 +80,6 @@ class Cluster < ApplicationRecord
   end
 
   def cleanup_etcd!
-    if ENV['ETCD_BROKER_URI']
-      EtcdBrokerClient.new.cleanup!(guid, guid)
-    elsif ENV['ETCD_URI']
-      Rails.logger.info "TODO: implement Cluster#cleanup_etcd! for $ETCD_URI"
-    end
+    self.cluster_etcd.destroy
   end
 end

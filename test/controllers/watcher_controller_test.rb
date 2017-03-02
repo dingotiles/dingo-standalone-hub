@@ -23,7 +23,7 @@ class WatcherControllerTest < ActionDispatch::IntegrationTest
   end
 
 
-  test "update only node to missing" do
+  test "update only node to missingand then back to running" do
     stub_request(:delete, "http://etcd.broker:6000/v2/service_instances/cluster1guid/service_bindings/cluster1guid").
       with(headers: {"Content-Type" => "application/json"}).
       to_return(status: 200)
@@ -40,5 +40,6 @@ class WatcherControllerTest < ActionDispatch::IntegrationTest
     assert_response 200
     assert_equal "missing", cluster_nodes(:c1n1).state, "ClusterNode state"
     assert_equal "dead", clusters(:cluster1).state, "Cluster state"
+    assert_nil clusters(:cluster1).cluster_etcd
   end
 end
