@@ -11,7 +11,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: app, trigger: true}
+    - {get: app}
     - {get: app-ci}
   - task: generate-assets
     file: app-ci/ci/tasks/generate-assets.yml
