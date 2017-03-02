@@ -30,9 +30,10 @@ class WatcherControllerTest < ActionDispatch::IntegrationTest
     stub_request(:delete, "http://etcd.broker:6000/v2/service_instances/cluster1guid").
       with(headers: {"Content-Type" => "application/json"}).
       to_return(status: 200)
-    with_broker_etcd do
-
-      post "/watcher/clusters/cluster1/nodes/n1", params: {"state": "missing"}
+    assert_difference "ClusterEtcd.count", -1 do
+      with_broker_etcd do
+        post "/watcher/clusters/cluster1/nodes/n1", params: {"state": "missing"}
+      end
     end
     assert_requested(:delete, "http://etcd.broker:6000/v2/service_instances/cluster1guid/service_bindings/cluster1guid", times: 1)
     assert_requested(:delete, "http://etcd.broker:6000/v2/service_instances/cluster1guid", times: 1)
