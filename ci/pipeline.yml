@@ -3,7 +3,7 @@ groups:
 - name: deploy
   jobs: [deploy-prod]
 - name: images
-  jobs: [build-base-image]
+  jobs: [build-base-image, build-pipeline-image]
 
 jobs:
 - name: deploy-prod
@@ -54,6 +54,15 @@ jobs:
     params:
       build: dockerfile
 
+- name: build-pipeline-image
+  public: true
+  serial: true
+  plan:
+  - get: app-ci
+  - put: docker-pipeline-image
+    params:
+      build: app-ci/ci/image
+
 resources:
 - name: app
   type: git
@@ -86,6 +95,14 @@ resources:
     organization: {{cf_prod_org}}
     space: {{cf_prod_space}}
     skip_cert_check: false
+
+- name: docker-pipeline-image
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-standalone-hub-pipeline
 
 - name: docker-base-image
   type: docker-image
