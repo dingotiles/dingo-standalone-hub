@@ -20,7 +20,14 @@ class EtcdBrokerClient
     end
   end
 
+  def cleanup!(instance_id, binding_id)
+    unbind(instance_id, binding_id)
+    deprovision(instance_id)
+  end
+
+  private
   def provision(instance_id)
+    Rails.logger.info("provision #{instance_id}")
     data = {"service_id": service_id, "plan_id": plan_id,
         "organization_guid": "org", "space_guid": "space"}
 
@@ -39,6 +46,7 @@ class EtcdBrokerClient
   end
 
   def binding(instance_id, binding_id)
+    Rails.logger.info("binding #{instance_id}")
     data = {"service_id": service_id, "plan_id": plan_id, "app_guid": "app"}
 
     uri = URI("#{url}/v2/service_instances/#{instance_id}/service_bindings/#{binding_id}")
@@ -56,6 +64,48 @@ class EtcdBrokerClient
     JSON.parse(res.body) if res.is_a? Net::HTTPSuccess
   rescue => e
     Rails.logger.info("etcd-broker PUT #{url}/v2/service_instances/#{instance_id}/service_bindings/#{binding_id} errored: " + e.message)
+    nil
+  end
+
+  def unbind(instance_id, binding_id)
+    Rails.logger.info("unbind #{instance_id}")
+    data = {"service_id": service_id, "plan_id": plan_id}
+    uri = URI("#{url}/v2/service_instances/#{instance_id}/service_bindings/#{binding_id}?#{data.to_param}")
+    req = Net::HTTP::Delete.new(uri.path)
+    req.basic_auth username, password
+    req.content_type = 'application/json'
+    req.body = data.to_json
+
+    res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.read_timeout = 60 # seconds
+      http.request(req)
+    end
+
+    Rails.logger.info("etcd-broker DELETE #{url}/v2/service_instances/#{instance_id}/service_bindings/#{binding_id}: " + res.body)
+    res.is_a? Net::HTTPSuccess
+  rescue => e
+    Rails.logger.info("etcd-broker DELETE #{url}/v2/service_instances/#{instance_id}/service_bindings/#{binding_id} errored: " + e.message)
+    nil
+  end
+
+  def deprovision(instance_id)
+    Rails.logger.info("deprovision #{instance_id}")
+    data = {"service_id": service_id, "plan_id": plan_id}
+    uri = URI("#{url}/v2/service_instances/#{instance_id}?#{data.to_param}")
+    req = Net::HTTP::Delete.new(uri.path)
+    req.basic_auth username, password
+    req.content_type = 'application/json'
+    req.body = data.to_json
+
+    res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.read_timeout = 60 # seconds
+      http.request(req)
+    end
+
+    Rails.logger.info("etcd-broker DELETE #{url}/v2/service_instances/#{instance_id}: " + res.body)
+    res.is_a? Net::HTTPSuccess
+  rescue => e
+    Rails.logger.info("etcd-broker DELETE #{url}/v2/service_instances/#{instance_id} errored: " + e.message)
     nil
   end
 end

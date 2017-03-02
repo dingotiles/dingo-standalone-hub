@@ -6,6 +6,7 @@ class Cluster < ApplicationRecord
   before_create :allocate_guid
   after_create :provision_cluster_etcd
   after_commit on: [:update, :destroy] { ClusterBroadcastJob.perform_later self }
+  after_commit :cleanup_etcd!, on: [:update, :destroy], if: :dead?
 
   def update_state_from_nodes!
     running_nodes = cluster_nodes.where.not(state: "missing")
@@ -36,6 +37,10 @@ class Cluster < ApplicationRecord
     else
       "/service/"
     end
+  end
+
+  def dead?
+    state == "dead"
   end
 
   private
@@ -70,6 +75,14 @@ class Cluster < ApplicationRecord
       }
     else
       {}
+    end
+  end
+
+  def cleanup_etcd!
+    if ENV['ETCD_BROKER_URI']
+      EtcdBrokerClient.new.cleanup!(guid, guid)
+    elsif ENV['ETCD_URI']
+      Rails.logger.info "TODO: implement Cluster#cleanup_etcd! for $ETCD_URI"
     end
   end
 end

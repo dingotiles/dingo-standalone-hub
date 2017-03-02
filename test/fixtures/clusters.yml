@@ -4,3 +4,4 @@ cluster1:
   account: known
   name: cluster1
   archive_method: s3
+  guid: cluster1guid
