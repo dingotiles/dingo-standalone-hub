@@ -55,6 +55,7 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
+gem 'httplog', '~> 0.99.0'
 group :production do
   gem 'lograge'
 end
