@@ -4,14 +4,38 @@ require 'test_helper'
 class AgentControllerTest < ActionDispatch::IntegrationTest
   include ClimateOptionsHelper
 
+  def metadata
+    {
+      "agent_version": "dev",
+      "image_version": "0.0.8",
+      "image_name": "dingotiles/dingo-postgresql",
+    }
+  end
+
+  test "POST collects image/agent metadata" do
+    assert_difference "ClusterNode.count", 1 do
+      with_global do
+        post "/agent/api", params: {
+          "cluster": "new1",
+          "node": "n1",
+          "account": "newacct@example.com",
+        }.merge(metadata)
+        assert_response :success
+      end
+    end
+    cluster_node = ClusterNode.last
+    assert_equal "dev", cluster_node.agent_version
+    assert_equal "0.0.8", cluster_node.image_version
+    assert_equal "dingotiles/dingo-postgresql", cluster_node.image_name
+  end
+
   test "POST assigns global s3 archive" do
     with_global_archive_s3 do
       post "/agent/api", params: {
         "cluster": "new1",
         "node": "n1",
         "account": "newacct@example.com",
-        "image_version": "0.0.8",
-      }
+      }.merge(metadata)
       assert_response :success
       resp = JSON.parse(response.body)
       assert "s3", resp["archives"]["method"]
@@ -30,8 +54,7 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
         "cluster": "new1",
         "node": "n1",
         "account": "newacct@example.com",
-        "image_version": "0.0.8",
-      }
+      }.merge(metadata)
       assert_response :success
       resp = JSON.parse(response.body)
       assert_equal "ssh", resp["archives"]["method"]
@@ -51,8 +74,7 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
         "cluster": "new1",
         "node": "n1",
         "account": "newacct@example.com",
-        "image_version": "0.0.8",
-      }
+      }.merge(metadata)
       assert_response :success
       resp = JSON.parse(response.body)
       assert "s3", resp["archives"]["method"]
@@ -72,8 +94,7 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
           "cluster": "new1",
           "node": "n1",
           "account": "newacct@example.com",
-          "image_version": "0.0.8",
-        }
+        }.merge(metadata)
         assert_response :success
         resp = JSON.parse(response.body)
         assert_equal "http://global.shared.db:4001", resp["etcd"]["uri"]
@@ -88,8 +109,7 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
           "cluster": "new1",
           "node": "n1",
           "account": "newacct@example.com",
-          "image_version": "0.0.8",
-        }
+        }.merge(metadata)
         assert_response :success
         resp = JSON.parse(response.body)
         assert_equal "http://user-abcdef:password@etcd.cluster:4001", resp["etcd"]["uri"]
@@ -106,8 +126,7 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
               "cluster": "new1",
               "node": "n1",
               "account": "newacct@example.com",
-              "image_version": "0.0.8",
-            }
+            }.merge(metadata)
           end
         end
       end
@@ -127,8 +146,7 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
               "cluster": "new1",
               "node": "n1",
               "account": accounts(:known).email,
-              "image_version": "0.0.8",
-            }
+            }.merge(metadata)
           end
         end
       end
@@ -150,8 +168,7 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
                 "cluster": cluster.name,
                 "node": "newnode1",
                 "account": cluster.account.email,
-                "image_version": "0.0.8",
-              }
+              }.merge(metadata)
             end
           end
         end
@@ -173,8 +190,7 @@ class AgentControllerTest < ActionDispatch::IntegrationTest
                 "cluster": clusters(:cluster_dead).name,
                 "node": cluster_nodes(:cluster_dead_n1).name,
                 "account": clusters(:cluster_dead).account.email,
-                "image_version": "0.0.8",
-              }
+              }.merge(metadata)
             end
           end
         end

@@ -17,7 +17,9 @@ class AgentController < ApplicationController
       return
     end
     node = @cluster.cluster_nodes.find_or_initialize_by(name: node_name) do |node|
+      node.agent_version = params[:agent_version]
       node.image_version = params[:image_version]
+      node.image_name    = params[:image_name]
     end
     node.state = "initialized"
     node.save!
